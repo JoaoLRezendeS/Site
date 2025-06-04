@@ -1,0 +1,143 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  background-color: #f0f4ff;
+  color: #1e1b18;
+}
+
+header {
+  background-color: #0A2463;
+  padding: 12px 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.navbar a:hover {
+  color: #D8315B;
+}
+
+.container {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+.sidebar {
+  width: 200px;
+}
+
+.sidebar button {
+  display: block;
+  margin-bottom: 15px;
+  background: none;
+  border: none;
+  color: #0a2463;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.post-card {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border: 2px solid #d0d8f0;
+  border-radius: 8px;
+  align-items: center;
+}
+
+.votes {
+  text-align: center;
+  font-size: 1.2em;
+  color: #d8315b;
+  cursor: pointer;
+}
+
+.votes .down {
+  color: #8aaae5;
+}
+
+.post-content h2 {
+  font-size: 1.1em;
+  color: #0a2463;
+  margin-bottom: 5px;
+}
+
+.post-content p {
+  font-size: 0.95em;
+  color: #555;
+}
+
+.form-section {
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #d0d8f0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 600px;
+}
+
+.form-section h2 {
+  margin-bottom: 15px;
+  color: #0a2463;
+  font-size: 1.2em;
+}
+
+.form-section input,
+.form-section textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+  resize: vertical;
+}
+
+.form-section button {
+  padding: 12px 20px;
+  background: #d8315b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.form-section button:hover {
+  background: #b62b4f;
+}

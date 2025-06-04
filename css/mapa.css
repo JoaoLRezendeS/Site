@@ -1,0 +1,119 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f5fb;
+  color: #1e1b18;
+  padding-top: 80px;
+  height: 100%;
+}
+
+header {
+  background-color: #0A2463;
+  padding: 12px 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.navbar a:hover {
+  color: #D8315B;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px;
+  gap: 40px;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.info {
+  max-width: 400px;
+  margin-left: 35px;
+}
+
+h1 {
+  color: #0A2463;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #1e1b18;
+}
+
+p {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.clinic-card {
+  background: #fff;
+  border: 1px solid #dce3f0;
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.clinic-card h3 {
+  margin: 0 0 5px;
+  color: #0A2463;
+}
+
+.clinic-card span {
+  display: block;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.clinic-card a {
+  display: inline-block;
+  margin-top: 8px;
+  color: purple;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* MAPA */
+.map {
+  max-width: 1200px;
+  height: 100%; /* altura aumentada */
+  margin-right: 35px;
+  flex-grow: 1; /* cresce junto com o container */
+}
+
+#map {
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ccc;
+}
+
+#map,
+.leaflet-container {
+  height: 80vh !important;
+}
+

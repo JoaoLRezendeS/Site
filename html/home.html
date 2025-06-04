@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Salus T - Comunidade LGBTQIA+</title>
+  <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+
+  <header>
+    <nav class="navbar">
+      <a href="/html/cadastro.html">Cadastro</a>
+      <a href="/Mapa/mapa.html">Mapa</a>
+      <a href="/html/index.html">Login</a>
+      <a href="#">Outro</a>
+    </nav>
+    <h1>Salus T</h1>
+  </header>
+
+ 
+  <div style="height: 80px;"></div>
+
+  <div class="container">
+
+    <aside class="sidebar">
+      <nav>
+        <ul>
+          <li><button onclick="filtrar('populares')">Mais populares</button></li>
+          <li><button onclick="filtrar('recentes')">Mais recentes</button></li>
+          <li><button onclick="filtrar('mes')">Neste mês</button></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="post-container">
+    
+    </main>
+
+  </div>
+
+  <section class="form-section">
+    <h2>Criar nova postagem</h2>
+    <form id="post-form">
+      <input type="text" id="titulo" placeholder="Título" required>
+      <textarea id="descricao" placeholder="Descrição" required></textarea>
+      <button type="submit">Publicar</button>
+    </form>
+  </section>
+
+  <script src="/js/home.js"></script>
+</body>
+</html>

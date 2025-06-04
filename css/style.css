@@ -1,0 +1,107 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #fff;
+    padding: 20px;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 36px;
+    color: #0A2463;
+    margin-bottom: 10px;
+  }
+  
+  h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #000;
+  }
+  
+  form {
+    width: 100%;
+  }
+  
+  input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    background-color: #157A9E;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .link {
+    margin-top: 16px;
+    font-size: 16px;
+    color: #000;
+  }
+  
+  .link a {
+    text-decoration: none;
+    color: #D8315B;
+  }
+  
+  .google-btn {
+    background-color: white;
+    color: #444;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 12px;
+  }
+  
+  .google-btn img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 28px;
+    }
+  
+    h2 {
+      font-size: 22px;
+    }
+  
+    input, button {
+      font-size: 16px;
+    }
+  
+    .google-btn {
+      font-size: 16px;
+    }
+  }
+  

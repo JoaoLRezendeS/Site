@@ -1,0 +1,26 @@
+[
+  {
+    "id": "vidabruo",
+    "nome": "Centro Municipal de Referência LGBT+ Vida Bruno",
+    "servico": "variedade de serviços e apoio para a comunidade LGBTQIA+",
+    "latitude": -13.010437337931139,
+    "longitude": -38.49946545685827,
+    "link": "https://maps.app.goo.gl/39CqocN14ewTjNW4A"
+  },
+  {
+    "id": "ClinicaTransvida",
+    "nome": "Clínica Transvida Serviços médicos e Psicológicos",
+    "servico": "Psicologia",
+    "latitude": -12.93341706297035,
+    "longitude": -38.42673309301376,
+    "link": "https://maps.app.goo.gl/SMKnpyUqewjt1m63A"
+  },
+   {
+    "id": "psicologo",
+    "nome": "Psicólogo LGBT+",
+    "servico": "Psicologia",
+    "latitude": -12.971983592207742,
+    "longitude": -38.513920966707445,
+    "link": "https://maps.app.goo.gl/csEHZZ6DoZ6rrXKV9"
+  }
+]
