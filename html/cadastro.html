@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cadastro</title>
-  <link rel="stylesheet" href="/css/cadastro.css" />
+  <link rel="stylesheet" href="/cadastro.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h2>Preencha as informações abaixo para se cadastrar na plataforma.</h2>
+
     <form id="cadastroForm">
       <label for="nome">Nome social</label>
       <input type="text" id="nome" required />
@@ -31,30 +34,65 @@
       <button type="submit">Cadastrar</button>
     </form>
 
-    <p>Já tem uma conta? <a href="index.html">Faça login</a></p>
+    <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+
+    <hr>
+    <h3>Ou cadastre-se com Google:</h3>
+
+    <div id="g_id_onload"
+         data-client_id="577278743325-vi8qf66g0945elfuosnrn729gb8196ui.apps.googleusercontent.com"
+         data-context="signup"
+         data-ux_mode="popup"
+         data-callback="handleCredentialResponse">
+    </div>
+
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="rectangular"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-size="large">
+    </div>
   </div>
 
   <script>
     document.getElementById("cadastroForm").addEventListener("submit", function(event) {
-      event.preventDefault(); 
+      event.preventDefault();
 
-     
-      const nome = document.getElementById("nome").value.trim();
-      const pronome = document.getElementById("pronome").value.trim();
-      const genero = document.getElementById("genero").value.trim();
-      const nascimento = document.getElementById("nascimento").value;
-      const email = document.getElementById("email").value.trim();
-      const senha = document.getElementById("senha").value.trim();
+      const data = {
+        nome: document.getElementById("nome").value.trim(),
+        pronome: document.getElementById("pronome").value.trim(),
+        genero: document.getElementById("genero").value.trim(),
+        nascimento: document.getElementById("nascimento").value,
+        email: document.getElementById("email").value.trim(),
+        senha: document.getElementById("senha").value.trim()
+      };
 
-     
-      if (nome && pronome && genero && nascimento && email && senha) {
-        
-        window.location.href = "index.html";
+      if (Object.values(data).every(Boolean)) {
+        fetch("/cadastro", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.href = "login.html";
+          } else {
+            alert("Erro ao cadastrar.");
+          }
+        });
       } else {
-        
-        alert("Por favor, preencha todos os campos.");
+        alert("Preencha todos os campos.");
       }
     });
+
+    function handleCredentialResponse(response) {
+      const userData = jwt_decode(response.credential);
+      alert(`Login com Google realizado! Bem-vindo(a), ${userData.name}`);
+      window.location.href = "login.html";
+    }
   </script>
 </body>
 </html>

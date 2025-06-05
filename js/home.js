@@ -85,3 +85,12 @@ fetch('https://jsonplaceholder.typicode.com/posts?_limit=3')
     });
   })
   .catch(err => console.error('Erro nas informações:', err));
+
+  function handleCredentialResponse(response) {
+  console.log("Encoded JWT ID token: " + response.credential);
+
+  // Decodificar o token JWT se quiser pegar nome, email, etc.
+  const token = response.credential;
+
+  
+}
