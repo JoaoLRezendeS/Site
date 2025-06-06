@@ -1,4 +1,10 @@
 {
+  "name": "cadastro",
+  "version": "2.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node js/server.js"
+  },
   "dependencies": {
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",
