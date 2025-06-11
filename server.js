@@ -61,10 +61,9 @@ function generateRandomId(length) {
 app.post('/usuarios', async (req, res) => {
   const { nome, pronome, genero, nascimento, email, senha } = req.body;
 
-  const id = generateRandomId(9);
+  const id = generateRandomId(9); // ID gerado aqui
 
   try {
-
     const saltRounds = 10;
     const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
 
@@ -72,14 +71,27 @@ app.post('/usuarios', async (req, res) => {
       INSERT INTO usuarios (id, nome, pronome, genero, nascimento, email, senha)
       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
     `;
+    // Use o ID gerado acima, não gere um novo aqui
     const values = [id, nome, pronome, genero, nascimento, email, senhaCriptografada];
+
     const result = await pool.query(query, values);
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Erro ao cadastrar usuário:', error);
-    res.status(500).json({ error: 'Erro ao cadastrar usuário' });
+    if (error.code === '23505') {
+      if (error.constraint === 'usuarios_email_key') {
+        res.status(409).json({ error: 'Este e-mail já está cadastrado.' });
+      } else if (error.constraint === 'usuarios_pkey') { // Nome da constraint para a PRIMARY KEY 'id'
+        res.status(409).json({ error: 'Erro de ID duplicado. Tente novamente.' });
+      } else {
+        res.status(409).json({ error: 'Conflito de dados: ' + error.detail });
+      }
+    } else {
+      res.status(500).json({ error: 'Erro interno do servidor ao cadastrar usuário.' });
+    }
   }
 });
+
 
 
 // Atualizar usuário pelo id

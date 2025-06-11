@@ -70,9 +70,6 @@ document.getElementById('post-form').addEventListener('submit', function(e) {
 carregarPosts();
 // Carregar "Informações Atuais" → vamos simular usando /posts/1,2,3
 
-
-
-
 fetch('https://jsonplaceholder.typicode.com/posts?_limit=3')
   .then(res => res.json())
   .then(data => {
@@ -92,5 +89,5 @@ fetch('https://jsonplaceholder.typicode.com/posts?_limit=3')
   // Decodificar o token JWT se quiser pegar nome, email, etc.
   const token = response.credential;
 
-  
+
 }
