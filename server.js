@@ -33,8 +33,6 @@ app.get('/', (req, res) => {
 
 app.get('/cadastro', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'cadastro.html'));
-
-  
 });
 
 app.get('/home', (req, res) => {

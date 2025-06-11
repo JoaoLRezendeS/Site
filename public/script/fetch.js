@@ -1,5 +1,5 @@
 document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
-  event.preventDefault(); // Impede o envio padrão do formulário
+  event.preventDefault(); 
 
   const nome = document.getElementById('nome').value;
   const pronome = document.getElementById('pronome').value;
@@ -26,7 +26,7 @@ document.getElementById('cadastroForm').addEventListener('submit', async functio
 
     if (response.ok) {
       console.log('Usuário cadastrado com sucesso (frontend):', data);
-      alert('Cadastro realizado com sucesso!');
+      window.location.href = "home";
     } else {
       console.error('Erro no cadastro (frontend):', data.error);
       alert('Erro ao cadastrar: ' + (data.error || 'Erro desconhecido'));
@@ -37,10 +37,9 @@ document.getElementById('cadastroForm').addEventListener('submit', async functio
   }
 });
 
-
 if (response.ok) {
   console.log("Usuário cadastrado com sucesso (frontend):", data);
   alert("Cadastro realizado com sucesso!");
-  window.location.href = "home.html"; // Adicione esta linha para redirecionar
+  window.location.href = "home.html"; 
 } else {
   }
