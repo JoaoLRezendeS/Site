@@ -11,9 +11,6 @@ const PORT = 3000;
 // Configurações do PostgreSQL
 const pool = require('./db');
 
-
-
-
 async function testConnection() {
   try{
     const res = await pool.query('SELECT NOW()');
@@ -22,7 +19,6 @@ async function testConnection() {
     console.error('Erro ao conectar ao banco:', err);
   }
 }
-
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -90,6 +86,38 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  const { email, senha } = req.body;
+
+  try {
+    // 1. Buscar o usuário pelo email
+    const userQuery = "SELECT * FROM usuarios WHERE email = $1";
+    const userResult = await pool.query(userQuery, [email]);
+
+    const user = userResult.rows[0];
+
+    // 2. Verificar se o usuário existe
+    if (!user) {
+      return res.status(400).json({ error: "Credenciais inválidas." });
+    }
+
+    // 3. Comparar a senha fornecida com a senha criptografada no banco
+    const isPasswordValid = await bcrypt.compare(senha, user.senha);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Credenciais inválidas." });
+    }
+
+    // 4. Se chegou aqui, o login foi bem-sucedido
+    // Você pode retornar os dados do usuário (sem a senha) ou um token JWT aqui
+    const { senha: _, ...userData } = user; // Remove a senha dos dados do usuário
+    res.status(200).json({ message: "Login bem-sucedido!", user: userData });
+
+  } catch (error) {
+    console.error("Erro ao fazer login:", error);
+    res.status(500).json({ error: "Erro interno do servidor ao tentar fazer login." });
+  }
+});
 
 
 // Atualizar usuário pelo id
@@ -110,7 +138,6 @@ app.put('/usuarios/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao atualizar usuário' });
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
