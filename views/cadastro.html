@@ -34,10 +34,7 @@
       <button type="submit">Cadastrar</button>
     </form>
 
-    <p>Já tem uma conta? <a href="/index.html">Faça login</a></p>
-
-    <hr>
-    <h3>Ou cadastre-se com Google:</h3>
+    <p>Já tem uma conta? <a href="/index">Faça login</a></p>
 
     <div id="g_id_onload"
          data-client_id="577278743325-vi8qf66g0945elfuosnrn729gb8196ui.apps.googleusercontent.com"
@@ -45,7 +42,6 @@
          data-ux_mode="popup"
          data-callback="handleCredentialResponse">
     </div>
-
     <div class="g_id_signin"
          data-type="standard"
          data-shape="rectangular"
@@ -54,45 +50,7 @@
          data-size="large">
     </div>
   </div>
-
-  <script>
-    document.getElementById("cadastroForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const data = {
-        nome: document.getElementById("nome").value.trim(),
-        pronome: document.getElementById("pronome").value.trim(),
-        genero: document.getElementById("genero").value.trim(),
-        nascimento: document.getElementById("nascimento").value,
-        email: document.getElementById("email").value.trim(),
-        senha: document.getElementById("senha").value.trim()
-      };
-
-      if (Object.values(data).every(Boolean)) {
-        fetch("/cadastro", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => {
-          if (response.ok) {
-            window.location.href = "login.html";
-          } else {
-            alert("Erro ao cadastrar.");
-          }
-        });
-      } else {
-        alert("Preencha todos os campos.");
-      }
-    });
-
-    function handleCredentialResponse(response) {
-      const userData = jwt_decode(response.credential);
-      alert(`Login com Google realizado! Bem-vindo(a), ${userData.name}`);
-      window.location.href = "login.html";
-    }
-  </script>
+  <script src="/script/fetch.js"></script>
+  <script src="/script/login-google.js"></script>
 </body>
 </html>

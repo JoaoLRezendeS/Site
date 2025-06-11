@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Salus</title>
   <link rel="stylesheet" href="./style/style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -16,13 +18,21 @@
       <button type="submit">Entrar na conta</button>
     </form>
     <div class="link">Esqueceu sua senha?</div>
-    <div class="link"><a href="./cadastro.html">Criar nova conta</a></div>
-
-    <button class="google-btn">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo"/>
-      Entrar com Google
-    </button>
-       
+    <div class="link"><a href="/cadastro">Criar nova conta</a></div>
+    <div id="g_id_onload"
+          data-client_id="577278743325-vi8qf66g0945elfuosnrn729gb8196ui.apps.googleusercontent.com"
+          data-context="signup"
+          data-ux_mode="popup"
+          data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin"
+          data-type="standard"
+          data-shape="rectangular"
+          data-theme="outline"
+          data-text="sign_in_with"
+          data-size="large">
+    </div>
   </div>
+  <script src="./js/login-google.js"></script>
 </body>
 </html>

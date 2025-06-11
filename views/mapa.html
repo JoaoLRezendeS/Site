@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clínicas LGBT+</title>
+  <link rel="stylesheet" href="/css/mapa.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="/home">Home</a>
+      <a href="/cadastro">Cadastro</a>
+      <a href="/index">Login</a>
+      <a href="#">Outro</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="info" id="clinic-list">
+      <h1>Clínicas LGBT+</h1>
+      <h2><strong>Salvador - BA</strong></h2>
+      <p>Veja locais que oferecem atendimento acolhedor à comunidade LGBTQIAPN+.</p>
+      <div class="clinic-card">
+        <h3>Centro Municipal de Referência LGBT+ Vida Bruno</h3>
+        <span>Prestador de Serviços Públicos</span>
+        <span>Variedade de serviços e apoio para a comunidade LGBTQIA+</span>
+        <a href="tel:+557133326677" class="atributos" target="_blank">
+          <i class="fa-solid fa-phone icon"></i></i>
+          <span class="texto-link">(71) 32022750</span>
+        </a>
+        <a href="https://www.google.com.br/maps/place/Centro+Municipal+de+Referência+LGBT%2B+Vida+Bruno/@-13.0116769,-38.5125994,15z/data=!4m6!3m5!1s0x716035b98065213:0x5506b9f6469feb22!8m2!3d-13.0104293!4d-38.4994623!16s%2Fg%2F11cnb0czg9?entry=tts&g_ep=EgoyMDI1MDUyOC4wIPu8ASoASAFQAw%3D%3D&skid=bfcc10dd-b0f8-4f2f-94c1-1130558c6d33">Av. Oceânica, 3731 - Ondina, Salvador - BA, 40170-010</a>
+      </div>
+      <div class="clinic-card">
+        <h3>Clínica Transvida Serviços médicos e Psicológicos</h3>
+        <span>Prestador de Serviços</span>
+        <span>Psicólogia</span>
+        <a href="tel:+557132136767" class="atributos" target="_blank">
+          <i class="fa-solid fa-phone icon"></i></i>
+          <span class="texto-link">(71) 32136767</span>
+        </a>
+        <a href="https://maps.app.goo.gl/SMKnpyUqewjt1m63A">edifício Evolution Business - Rua Avenida São Rafael, 1405 - Sala 704 - São Rafael, Salvador - BA, 41253-190</a>
+      </div>
+      <div class="clinic-card">
+        <h3>Psicólogo LGBT+</h3>
+        <span>Prestador de Serviços Públicos</span>
+        <span>Psicólogia</span>
+        <a href="tel:+5571987837517" class="atributos" target="_blank">
+          <i class="fa-solid fa-phone icon"></i></i>
+          <span class="texto-link">(71) 987837517</span>
+        </a>
+        <a href="https://maps.app.goo.gl/3t9sUPCHaMKzGKYe8">Clínica Humanas - Av. Estados Unidos, 82 - Comércio, Salvador - BA, 40010-020</a>
+      </div>
+    </section>
+
+    <section class="map">
+      <div id="map" style="width: 100%; height: 400px; border-radius: 12px;"></div>
+    </section>
+  </main>
+
+  <script src="mapa.js"></script>
+  
+</body>
+</html>
