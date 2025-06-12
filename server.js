@@ -5,6 +5,8 @@ const { Pool } = require('pg');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = 3000;
@@ -20,6 +22,15 @@ async function testConnection() {
     console.error('Erro ao conectar ao banco:', err);
   }
 }
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // seuemail@gmail.com
+    pass: process.env.EMAIL_PASS  // senha do app gerada no Google
+  }
+});
+
 
 // Middlewares
 app.use(bodyParser.json());
@@ -39,6 +50,7 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.htm
 app.get('/cadastro', (req, res) => res.sendFile(path.join(__dirname, 'views', 'cadastro.html')));
 app.get('/home', (req, res) => res.sendFile(path.join(__dirname, 'views', 'home.html')));
 app.get('/mapa', (req, res) => res.sendFile(path.join(__dirname, 'views', 'mapa.html')));
+app.get('/esqueci-a-senha', (req, res) => res.sendFile(path.join(__dirname, 'views', 'esqueci-a-senha.html')));
 
 // 🔑 Geração de ID
 function generateRandomId(length) {
@@ -91,6 +103,29 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: "Erro ao fazer login." });
   }
 });
+
+//Esqueci a senha
+app.post('/esqueci-a-senha', async (req, res) => {
+  const { email } = req.body;
+
+  // Verifica se e-mail existe no banco (simulado)
+  const user = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+  if (user.rows.length === 0) {
+    return res.status(404).json({ error: 'E-mail não cadastrado.' });
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const link = `http://localhost:3000/recuperar-a-senha?token=${token}`;
+
+  // Aqui, ao invés de enviar e-mail, só imprime no console
+  console.log(`Link para resetar senha para ${email}: ${link}`);
+
+  // Salvar token no banco, se quiser validar depois
+
+  res.json({ message: 'Link para recuperação gerado. Verifique o console do servidor.' });
+});
+
+
 
 // 🔄 Atualizar usuário
 app.put('/usuarios/:id', async (req, res) => {

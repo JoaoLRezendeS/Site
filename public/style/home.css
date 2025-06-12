@@ -2,12 +2,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 body {
   background-color: #f0f4ff;
   color: #1e1b18;
+  line-height: 1.6;
 }
 
 header {
@@ -25,7 +26,18 @@ header {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.navbar h1 {
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.nav-links {
+  display: flex;
   gap: 24px;
 }
 
@@ -34,31 +46,65 @@ header {
   text-decoration: none;
   font-weight: 500;
   font-size: 1rem;
-  transition: color 0.3s;
+  transition: color 0.3s ease;
 }
 
 .navbar a:hover {
   color: #D8315B;
 }
 
+.header-spacer {
+  height: 80px;
+}
+
 .container {
   display: flex;
   padding: 20px;
   gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .sidebar {
-  width: 200px;
+  width: 220px;
+  padding: 20px 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  align-self: flex-start;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.sidebar nav ul {
+  list-style: none;
 }
 
 .sidebar button {
   display: block;
-  margin-bottom: 15px;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 10px;
+  padding: 10px 15px;
   background: none;
   border: none;
   color: #0a2463;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar button:hover {
+  background-color: #e0e8f0;
+  color: #d8315b;
+}
+
+.sidebar button.active-filter {
+  background-color: #0a2463;
+  color: #fff;
 }
 
 .main-content {
@@ -71,25 +117,43 @@ header {
 .post-card {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   padding: 15px;
   background: white;
-  border: 2px solid #d0d8f0;
+  border: 1px solid #d0d8f0;
   border-radius: 8px;
-  align-items: flex-start;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-/* ✅ Imagem do post */
+.post-header {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.username {
+  font-weight: bold;
+  color: #0a2463;
+  font-size: 0.95em;
+  margin-right: 5px;
+}
+
+.post-date {
+  font-size: 0.8em;
+  color: #888;
+}
+
 .post-image {
   max-width: 100%;
   max-height: 300px;
   border-radius: 6px;
-  margin-top: 10px;
-  margin-bottom: 10px;
   object-fit: cover;
+  margin: 5px 0;
 }
 
-/* ✅ Cabeçalho e texto dos posts */
+.post-content {
+  width: 100%;
+}
+
 .post-content h2 {
   font-size: 1.1em;
   color: #0a2463;
@@ -101,28 +165,47 @@ header {
   color: #555;
 }
 
-/* ✅ Botão de curtir bonito com ícone */
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  padding-top: 5px;
+  border-top: 1px solid #eee;
+}
+
 .btn-curtir {
   background: none;
   border: none;
   font-size: 1.5rem;
   color: #d8315b;
   cursor: pointer;
-  transition: transform 0.2s;
-  margin-bottom: 5px;
+  transition: transform 0.2s ease;
+  padding: 0;
+  line-height: 1;
 }
 
 .btn-curtir:hover {
   transform: scale(1.2);
 }
 
-/* ✅ Área de comentários */
+.like-count,
+.comment-info {
+  font-size: 0.85em;
+  color: #666;
+}
+
 .comentarios-box {
   margin-top: 10px;
-  background-color: #f4f4f4;
+  background-color: #f8faff;
   border-radius: 8px;
   padding: 10px;
   width: 100%;
+  border: 1px solid #e0e8f0;
+}
+
+.comentarios-box strong {
+  color: #0a2463;
 }
 
 .comentarios-box p {
@@ -131,17 +214,22 @@ header {
   color: #333;
 }
 
-.comentarios-box input[type="text"] {
+.comment-input-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.comment-input-area input[type="text"] {
+  flex: 1;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  width: 75%;
-  margin-right: 8px;
   font-size: 0.9rem;
 }
 
-.comentarios-box button {
-  padding: 8px 10px;
+.comment-input-area button {
+  padding: 8px 12px;
   background-color: #0a2463;
   color: white;
   border: none;
@@ -151,25 +239,25 @@ header {
   font-size: 0.9rem;
 }
 
-.comentarios-box button:hover {
+.comment-input-area button:hover {
   background-color: #081d4f;
 }
 
-/* ✅ Seção de formulário */
 .form-section {
   margin: 20px auto;
-  padding: 20px;
+  padding: 25px;
   background: white;
   border-radius: 8px;
-  border: 2px solid #d0d8f0;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border: 1px solid #d0d8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   max-width: 600px;
 }
 
 .form-section h2 {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: #0a2463;
-  font-size: 1.2em;
+  font-size: 1.4em;
+  text-align: center;
 }
 
 .form-section input,
@@ -180,10 +268,20 @@ header {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1em;
+}
+
+.form-section textarea {
+  min-height: 80px;
   resize: vertical;
 }
 
+input[type="file"] {
+  padding: 8px 0;
+  border: none;
+}
+
 .form-section button {
+  width: 100%;
   padding: 12px 20px;
   background: #d8315b;
   color: white;
@@ -191,9 +289,98 @@ header {
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  transition: background 0.3s;
+  font-size: 1.1rem;
+  transition: background 0.3s ease;
 }
 
 .form-section button:hover {
   background: #b62b4f;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-links {
+    justify-content: center;
+    width: 100%;
+    gap: 15px;
+  }
+
+  .header-spacer {
+    height: 120px;
+  }
+
+  .container {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .sidebar {
+    width: 100%;
+    order: 2;
+    position: static;
+    padding: 15px;
+  }
+
+  .sidebar nav ul {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sidebar button {
+    text-align: center;
+    flex-grow: 1;
+  }
+
+  .main-content {
+    order: 1;
+  }
+
+  .comentarios-box .comment-input-area {
+    flex-direction: column;
+  }
+
+  .form-section {
+    margin: 15px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar a {
+    font-size: 0.9rem;
+  }
+
+  .header-spacer {
+    height: 100px;
+  }
+
+  .sidebar button {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .post-content h2 {
+    font-size: 0.95em;
+  }
+
+  .btn-curtir {
+    font-size: 1.3rem;
+  }
+
+  .comment-info {
+    font-size: 0.75em;
+  }
+
+  .comentarios-box p {
+    font-size: 0.8rem;
+  }
 }

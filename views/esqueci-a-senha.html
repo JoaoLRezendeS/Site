@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Esqueci a Senha - Salus</title>
+  <link rel="stylesheet" href="../style/esqueci-a-senha.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Salus</h1>
+    <h2>Redefinir senha</h2>
+    <p>Informe o e-mail cadastrado e enviaremos um link para redefinir sua senha.</p>
+    
+    <form id="esqueciSenhaForm">
+      <input type="email" id="email" placeholder="Endereço de e-mail" required />
+      <button type="submit">Enviar link de redefinição</button>
+    </form>
+
+    <div class="link"><a href="/">Voltar para login</a></div>
+  </div>
+
+  <!-- Caminho ajustado para o JS de envio -->
+  <script src="../script/fetch.js"></script>
+</body>
+</html>

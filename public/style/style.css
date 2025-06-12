@@ -35,6 +35,8 @@
   form {
     width: 100%;
   }
+
+  
   
   input {
     width: 100%;
@@ -45,7 +47,7 @@
     border: 1px solid #ccc;
   }
   
-  button {
+  form button {
     width: 100%;
     padding: 14px;
     font-size: 18px;
@@ -55,6 +57,7 @@
     background-color: #157A9E;
     cursor: pointer;
     margin-top: 10px;
+    margin-bottom: 10px;
   }
   
   .link {
