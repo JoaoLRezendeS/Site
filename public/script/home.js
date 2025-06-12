@@ -1,93 +1,176 @@
-let posts = [];
+let todosPosts = [];
 
-// Carregar posts da API
-function carregarPosts() {
-  fetch('https://jsonplaceholder.typicode.com/posts?_limit=5')
-    .then(res => res.json())
-    .then(data => {
-      // Adiciona votos simulados
-      posts = data.map(p => ({ ...p, votos: Math.floor(Math.random() * 100) }));
-      renderPosts(posts);
-    })
-    .catch(err => console.error('Erro ao carregar posts:', err));
-}
-
-// Renderizar posts
-function renderPosts(lista) {
-  const container = document.getElementById('post-container');
-  container.innerHTML = '';
-  lista.forEach(post => {
-    const postCard = document.createElement('div');
-    postCard.className = 'post-card';
-
-    const votes = document.createElement('div');
-    votes.className = 'votes';
-    votes.innerHTML = `
-      <span class="up" onclick="votar(${post.id}, 1)">⬆️</span>
-      <strong>${post.votos}</strong>
-      <span class="down" onclick="votar(${post.id}, -1)">⬇️</span>
-    `;
-
-    const content = document.createElement('div');
-    content.className = 'post-content';
-    content.innerHTML = `<h2>${post.title}</h2><p>${post.body}</p>`;
-
-    postCard.appendChild(votes);
-    postCard.appendChild(content);
-
-    container.appendChild(postCard);
-  });
-}
-
-// Votar → só afeta local
-function votar(id, valor) {
-  const post = posts.find(p => p.id === id);
-  if (post) {
-    post.votos += valor;
+// ✅ Carrega todos os posts do backend
+async function carregarPosts() {
+  try {
+    const res = await fetch('/postagens');
+    const posts = await res.json();
+    todosPosts = posts;
     renderPosts(posts);
+  } catch (err) {
+    console.error('Erro ao carregar posts:', err);
   }
 }
 
-// Formulário → não envia, só simula
-document.getElementById('post-form').addEventListener('submit', function(e) {
+// ✅ Filtro de postagens com regras atualizadas
+function filtrar(tipo) {
+  let filtrados = [...todosPosts];
+  const agora = new Date();
+
+  if (tipo === 'populares') {
+    filtrados = filtrados
+      .filter(post => (post.votos || 0) > 4)
+      .sort((a, b) => (b.votos || 0) - (a.votos || 0));
+  } else if (tipo === 'recentes') {
+    filtrados = filtrados.filter(post => {
+      const dataPost = new Date(post.data);
+      const diffHoras = (agora - dataPost) / (1000 * 60 * 60);
+      return diffHoras <= 24;
+    }).sort((a, b) => new Date(b.data) - new Date(a.data));
+  } else if (tipo === 'mes') {
+    filtrados = filtrados.filter(post => {
+      const dataPost = new Date(post.data);
+      return dataPost.getMonth() === agora.getMonth() &&
+             dataPost.getFullYear() === agora.getFullYear();
+    });
+  }
+
+  renderPosts(filtrados);
+}
+
+// ✅ Renderiza os posts no HTML
+function renderPosts(posts) {
+  const container = document.getElementById('post-container');
+  container.innerHTML = '';
+
+  posts.forEach(post => {
+    const div = document.createElement('div');
+    div.className = 'post-card';
+    div.innerHTML = `
+      <div class="post-content">
+        <p><strong>${post.nome || 'Usuário'}</strong></p>
+        ${post.imagem ? `<img src="${post.imagem}" class="post-image">` : ''}
+        ${post.titulo ? `<h2>${post.titulo}</h2>` : ''}
+        ${post.descricao ? `<p>${post.descricao}</p>` : ''}
+
+        <p><span id="votos-${post.id}">${post.votos || 0}</span> curtidas</p>
+        <button class="like-button" onclick="curtirPostagem(${post.id})">💗</button>
+
+        <div class="comments-section">
+          <p><strong>Comentários:</strong></p>
+          <div id="comentarios-${post.id}" class="comment-list"></div>
+          <input type="text" id="comentario-${post.id}" placeholder="Escreva um comentário..." />
+          <button onclick="comentarPostagem(${post.id})">Comentar</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+    carregarComentarios(post.id);
+  });
+}
+
+// ✅ Curtir uma postagem
+async function curtirPostagem(postId) {
+  try {
+    const res = await fetch(`/postagens/${postId}/curtir`, { method: 'POST' });
+    if (res.ok) {
+      const json = await res.json();
+      document.getElementById(`votos-${postId}`).textContent = json.votos;
+    } else {
+      alert('Erro ao curtir postagem.');
+    }
+  } catch (err) {
+    console.error('Erro ao curtir:', err);
+    alert('Erro ao curtir postagem.');
+  }
+}
+
+// ✅ Comentar em uma postagem
+async function comentarPostagem(postId) {
+  const input = document.getElementById(`comentario-${postId}`);
+  const texto = input.value.trim();
+
+  if (!texto) return;
+
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  if (!usuario) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/postagens/${postId}/comentarios`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_usuario: usuario.id, texto })
+    });
+
+    if (res.ok) {
+      input.value = '';
+      carregarComentarios(postId);
+    } else {
+      alert('Erro ao comentar.');
+    }
+  } catch (err) {
+    console.error('Erro ao comentar:', err);
+  }
+}
+
+// ✅ Carrega os comentários de um post
+async function carregarComentarios(postId) {
+  try {
+    const res = await fetch(`/postagens/${postId}/comentarios`);
+    const comentarios = await res.json();
+    const container = document.getElementById(`comentarios-${postId}`);
+    container.innerHTML = '';
+
+    comentarios.forEach(c => {
+      const p = document.createElement('p');
+      p.className = 'comment';
+      p.textContent = `${c.nome}: ${c.texto}`;
+      container.appendChild(p);
+    });
+  } catch (err) {
+    console.error('Erro ao carregar comentários:', err);
+  }
+}
+
+// ✅ Enviar nova postagem
+document.getElementById('post-form').addEventListener('submit', async function (e) {
   e.preventDefault();
-  const titulo = document.getElementById('titulo').value;
-  const descricao = document.getElementById('descricao').value;
 
-  const newPost = {
-    id: posts.length + 1,
-    title: titulo,
-    body: descricao,
-    votos: 0
-  };
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  if (!usuario) {
+    alert("Você precisa estar logado.");
+    return;
+  }
 
-  posts.push(newPost);
-  renderPosts(posts);
-  this.reset();
+  const formData = new FormData();
+  formData.append('titulo', document.getElementById('titulo').value);
+  formData.append('descricao', document.getElementById('descricao').value);
+  formData.append('id_usuario', usuario.id);
+
+  const imagem = document.getElementById('imagem').files[0];
+  if (imagem) formData.append('imagem', imagem);
+
+  try {
+    const res = await fetch('/postagens', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (res.ok) {
+      alert('Post enviado com sucesso!');
+      carregarPosts();
+      document.getElementById('post-form').reset();
+    } else {
+      alert('Erro ao enviar post.');
+    }
+  } catch (err) {
+    console.error('Erro ao enviar post:', err);
+    alert('Erro no envio.');
+  }
 });
 
-// Inicial
+// ✅ Inicializa
 carregarPosts();
-// Carregar "Informações Atuais" → vamos simular usando /posts/1,2,3
-
-fetch('https://jsonplaceholder.typicode.com/posts?_limit=3')
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById('info-container');
-    data.forEach(info => {
-      const card = document.createElement('div');
-      card.className = 'info-card';
-      card.innerHTML = `<h3>📰 ${info.title}</h3><p>${info.body}</p>`;
-      container.appendChild(card);
-    });
-  })
-  .catch(err => console.error('Erro nas informações:', err));
-
-  function handleCredentialResponse(response) {
-  console.log("Encoded JWT ID token: " + response.credential);
-
-  // Decodificar o token JWT se quiser pegar nome, email, etc.
-  const token = response.credential;
-
-
-}

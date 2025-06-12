@@ -70,25 +70,26 @@ header {
 
 .post-card {
   display: flex;
+  flex-direction: column;
   gap: 15px;
   padding: 15px;
   background: white;
   border: 2px solid #d0d8f0;
   border-radius: 8px;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.votes {
-  text-align: center;
-  font-size: 1.2em;
-  color: #d8315b;
-  cursor: pointer;
+/* ✅ Imagem do post */
+.post-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  object-fit: cover;
 }
 
-.votes .down {
-  color: #8aaae5;
-}
-
+/* ✅ Cabeçalho e texto dos posts */
 .post-content h2 {
   font-size: 1.1em;
   color: #0a2463;
@@ -100,6 +101,61 @@ header {
   color: #555;
 }
 
+/* ✅ Botão de curtir bonito com ícone */
+.btn-curtir {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #d8315b;
+  cursor: pointer;
+  transition: transform 0.2s;
+  margin-bottom: 5px;
+}
+
+.btn-curtir:hover {
+  transform: scale(1.2);
+}
+
+/* ✅ Área de comentários */
+.comentarios-box {
+  margin-top: 10px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+}
+
+.comentarios-box p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.comentarios-box input[type="text"] {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 75%;
+  margin-right: 8px;
+  font-size: 0.9rem;
+}
+
+.comentarios-box button {
+  padding: 8px 10px;
+  background-color: #0a2463;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.comentarios-box button:hover {
+  background-color: #081d4f;
+}
+
+/* ✅ Seção de formulário */
 .form-section {
   margin: 20px auto;
   padding: 20px;

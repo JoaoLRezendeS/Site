@@ -10,19 +10,18 @@
 
   <header>
     <nav class="navbar">
-      <a href="/cadastro">Cadastro</a>
       <a href="/mapa">Mapa</a>
-      <a href="/index">Login</a>
       <a href="#">Outro</a>
     </nav>
     <h1>Salus T</h1>
   </header>
 
- 
+  <!-- Espaço para compensar header fixo -->
   <div style="height: 80px;"></div>
 
   <div class="container">
 
+    <!-- Barra lateral de filtros -->
     <aside class="sidebar">
       <nav>
         <ul>
@@ -33,22 +32,23 @@
       </nav>
     </aside>
 
+    <!-- Área principal de posts -->
     <main class="main-content" id="post-container">
-    
+      <!-- Os posts serão inseridos aqui dinamicamente -->
     </main>
 
   </div>
 
+  <!-- Formulário de nova postagem -->
   <section class="form-section">
     <h2>Criar nova postagem</h2>
-    <form id="post-form">
-      <input type="text" id="titulo" placeholder="Título" required>
-      <textarea id="descricao" placeholder="Descrição" required></textarea>
+    <form id="post-form" enctype="multipart/form-data">
+      <input type="text" id="titulo" name="titulo" placeholder="Título (opcional)">
+      <textarea id="descricao" name="descricao" placeholder="Descrição (opcional)"></textarea>
+      <input type="file" id="imagem" name="imagem" accept="image/*">
       <button type="submit">Publicar</button>
     </form>
   </section>
-
-  
 
   <script src="/script/home.js"></script>
   
