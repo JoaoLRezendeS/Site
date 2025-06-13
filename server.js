@@ -11,7 +11,6 @@ const crypto = require('crypto');
 const app = express();
 const PORT = 3000;
 
-// PostgreSQL
 const pool = require('./db');
 
 async function testConnection() {
@@ -26,18 +25,17 @@ async function testConnection() {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // seuemail@gmail.com
-    pass: process.env.EMAIL_PASS  // senha do app gerada no Google
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
+const tokens = new Map();
 
-// Middlewares
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// 📦 Uploads
 const uploadPath = path.join(__dirname, 'public/uploads');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadPath),
@@ -45,14 +43,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// 🧭 Rotas de páginas
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/cadastro', (req, res) => res.sendFile(path.join(__dirname, 'views', 'cadastro.html')));
 app.get('/home', (req, res) => res.sendFile(path.join(__dirname, 'views', 'home.html')));
 app.get('/mapa', (req, res) => res.sendFile(path.join(__dirname, 'views', 'mapa.html')));
 app.get('/esqueci-a-senha', (req, res) => res.sendFile(path.join(__dirname, 'views', 'esqueci-a-senha.html')));
+app.get('/recuperar-a-senha', (req, res) => res.sendFile(path.join(__dirname, 'views', 'redefinir-senha.html')));
 
-// 🔑 Geração de ID
+
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -62,31 +60,24 @@ function generateRandomId(length) {
   return result;
 }
 
-// 📥 Cadastro
 app.post('/usuarios', async (req, res) => {
   const { nome, pronome, genero, nascimento, email, senha } = req.body;
   const id = generateRandomId(9);
 
   try {
     const senhaCriptografada = await bcrypt.hash(senha, 10);
-    const query = `
-      INSERT INTO usuarios (id, nome, pronome, genero, nascimento, email, senha)
-      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
-    `;
+    const query = `INSERT INTO usuarios (id, nome, pronome, genero, nascimento, email, senha) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`;
     const values = [id, nome, pronome, genero, nascimento, email, senhaCriptografada];
     const result = await pool.query(query, values);
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    if (error.code === '23505') {
-      if (error.constraint === 'usuarios_email_key') {
-        return res.status(409).json({ error: 'E-mail já cadastrado.' });
-      }
+    if (error.code === '23505' && error.constraint === 'usuarios_email_key') {
+      return res.status(409).json({ error: 'E-mail já cadastrado.' });
     }
     res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
   }
 });
 
-// 🔐 Login
 app.post('/login', async (req, res) => {
   const { email, senha } = req.body;
 
@@ -104,30 +95,55 @@ app.post('/login', async (req, res) => {
   }
 });
 
-//Esqueci a senha
 app.post('/esqueci-a-senha', async (req, res) => {
   const { email } = req.body;
+  console.log("📥 E-mail recebido no backend:", email);
 
-  // Verifica se e-mail existe no banco (simulado)
-  const user = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
-  if (user.rows.length === 0) {
-    return res.status(404).json({ error: 'E-mail não cadastrado.' });
+  try {
+    const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'E-mail não cadastrado.' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    tokens.set(token, { email, expira: Date.now() + 3600000 });
+
+    const link = `http://localhost:3000/recuperar-a-senha?token=${token}`;
+
+    await transporter.sendMail({
+      from: `Salus T <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Recuperação de Senha - Salus T',
+      html: `<p>Você solicitou a redefinição de senha.</p><p><a href="${link}">Clique aqui para redefinir sua senha</a></p><p>Este link é válido por 1 hora.</p>`
+    });
+
+    res.json({ message: 'Link de recuperação enviado! Verifique seu e-mail.' });
+  } catch (err) {
+    console.error('Erro ao enviar link:', err);
+    res.status(500).json({ error: 'Erro ao processar pedido.' });
+  }
+});
+
+app.post('/redefinir-senha', async (req, res) => {
+  const { token, novaSenha } = req.body;
+  const dados = tokens.get(token);
+
+  if (!dados || dados.expira < Date.now()) {
+    return res.status(400).json({ error: 'Token inválido ou expirado.' });
   }
 
-  const token = crypto.randomBytes(32).toString('hex');
-  const link = `http://localhost:3000/recuperar-a-senha?token=${token}`;
-
-  // Aqui, ao invés de enviar e-mail, só imprime no console
-  console.log(`Link para resetar senha para ${email}: ${link}`);
-
-  // Salvar token no banco, se quiser validar depois
-
-  res.json({ message: 'Link para recuperação gerado. Verifique o console do servidor.' });
+  try {
+    const senhaCriptografada = await bcrypt.hash(novaSenha, 10);
+    await pool.query('UPDATE usuarios SET senha = $1 WHERE email = $2', [senhaCriptografada, dados.email]);
+    tokens.delete(token);
+    res.json({ mensagem: 'Senha atualizada com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao redefinir senha.' });
+  }
 });
 
 
-
-// 🔄 Atualizar usuário
+// Atualizar usuário
 app.put('/usuarios/:id', async (req, res) => {
   const { id } = req.params;
   const { nome, pronome, genero, nascimento, email, senha } = req.body;
@@ -146,7 +162,7 @@ app.put('/usuarios/:id', async (req, res) => {
   }
 });
 
-// 📸 Criar postagem com imagem
+// Criar postagem com imagem
 app.post('/postagens', upload.single('imagem'), async (req, res) => {
   const { titulo, descricao, id_usuario } = req.body;
   const imagem = req.file ? `/uploads/${req.file.filename}` : null;
@@ -163,7 +179,7 @@ app.post('/postagens', upload.single('imagem'), async (req, res) => {
   }
 });
 
-// 📤 Listar postagens com nome do autor
+// Listar postagens com nome do autor
 app.get('/postagens', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -178,7 +194,7 @@ app.get('/postagens', async (req, res) => {
   }
 });
 
-// ❤️ Curtir uma postagem (corrigido)
+// Curtir postagem
 app.post('/postagens/:id/curtir', async (req, res) => {
   const { id } = req.params;
 
@@ -196,13 +212,11 @@ app.post('/postagens/:id/curtir', async (req, res) => {
 
     res.status(200).json({ votos: result.rows[0].votos });
   } catch (err) {
-    console.error('Erro ao curtir postagem:', err);
     res.status(500).json({ error: 'Erro ao curtir postagem.' });
   }
 });
 
-
-// 💬 Comentar em uma postagem
+// Comentar postagem
 app.post('/postagens/:id/comentarios', async (req, res) => {
   const { id } = req.params;
   const { id_usuario, texto } = req.body;
@@ -219,7 +233,7 @@ app.post('/postagens/:id/comentarios', async (req, res) => {
   }
 });
 
-// 📚 Listar comentários de uma postagem
+// Listar comentários
 app.get('/postagens/:id/comentarios', async (req, res) => {
   const { id } = req.params;
 
@@ -237,6 +251,11 @@ app.get('/postagens/:id/comentarios', async (req, res) => {
   }
 });
 
+
+
+
+
+// Inicializa o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
   testConnection();

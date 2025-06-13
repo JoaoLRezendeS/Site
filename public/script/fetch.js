@@ -73,9 +73,6 @@ if (loginForm) {
       console.log('Dados da resposta:', data);
 
       if (response.ok) {
-        
-       
-
         // ✅ Salva o usuário logado no localStorage
         localStorage.setItem("usuario", JSON.stringify(data.user));
 
@@ -91,16 +88,30 @@ if (loginForm) {
   });
 }
 
-document.getElementById('esqueciSenhaForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+// ===== CÓDIGO PARA ESQUECI A SENHA =====
+const esqueciForm = document.getElementById('esqueciSenhaForm');
+if (esqueciForm) {
+  esqueciForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
     const email = document.getElementById('email').value;
 
-    const response = await fetch('/esqueci-a-senha', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
+    console.log('📩 Solicitando recuperação de senha para:', email);
 
-    const result = await response.json();
-    alert(result.message || result.error);
+    try {
+      const response = await fetch('/esqueci-a-senha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const result = await response.json();
+      console.log('🔁 Resposta recebida:', result);
+      alert(result.message || result.error);
+    } catch (error) {
+      console.error('❌ Erro ao enviar solicitação:', error);
+      alert('Erro ao enviar: ' + error.message);
+    }
   });
+}
