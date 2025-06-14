@@ -13,12 +13,11 @@
       <h1>Salus T</h1>
       <div class="nav-links">
         <a href="/mapa">Mapa</a>
-        <a href="#">Outro</a>
+        <a href="/filmes">Filmes</a>
       </div>
     </nav>
   </header>
 
-  <!-- Espaço para compensar o header fixo -->
   <div class="header-spacer"></div>
 
   <div class="container">
@@ -40,6 +39,15 @@
     </main>
 
   </div>
+
+  <!-- 🔽 Seção que mostra a imagem e nome do filme selecionado -->
+  <div id="filme-info" class="form-section" style="display: none;">
+    <div class="filme-info-wrapper">
+      <img id="filme-capa" src="" alt="Capa do Filme" />
+      <h2>Comentando sobre: <span id="filme-nome"></span></h2>
+    </div>
+  </div>
+  <input type="hidden" id="filme" name="filme" />
 
   <!-- Formulário de nova postagem -->
   <section class="form-section">

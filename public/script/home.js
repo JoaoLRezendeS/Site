@@ -1,26 +1,42 @@
 let todosPosts = [];
 
-// ✅ Carrega todos os posts do backend
 async function carregarPosts() {
   try {
-    const res = await fetch('/postagens');
+    // Esconde a seção até saber se é de um filme
+    document.getElementById('filme-info').style.display = 'none';
+
+    const params = new URLSearchParams(window.location.search);
+    const filme = params.get('filme');
+    const url = filme ? `/postagens?filme=${encodeURIComponent(filme)}` : '/postagens';
+
+    const res = await fetch(url);
     const posts = await res.json();
     todosPosts = posts;
     renderPosts(posts);
+
+    if (filme) {
+      document.getElementById('filme-info').style.display = 'block';
+      document.getElementById('filme-nome').textContent = filme;
+
+      const imgNome = filme.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replaceAll(' ', '-');
+
+      document.getElementById('filme-capa').src = `/uploads/${imgNome}.jpg`;
+      document.getElementById('filme').value = filme;
+    }
+
   } catch (err) {
     console.error('Erro ao carregar posts:', err);
   }
 }
 
-// ✅ Filtro de postagens com regras atualizadas
 function filtrar(tipo) {
   let filtrados = [...todosPosts];
   const agora = new Date();
 
   if (tipo === 'populares') {
-    filtrados = filtrados
-      .filter(post => (post.votos || 0) > 4)
-      .sort((a, b) => (b.votos || 0) - (a.votos || 0));
+    filtrados = filtrados.filter(post => (post.votos || 0) > 4).sort((a, b) => (b.votos || 0) - (a.votos || 0));
   } else if (tipo === 'recentes') {
     filtrados = filtrados.filter(post => {
       const dataPost = new Date(post.data);
@@ -38,10 +54,13 @@ function filtrar(tipo) {
   renderPosts(filtrados);
 }
 
-// ✅ Renderiza os posts no HTML
 function renderPosts(posts) {
   const container = document.getElementById('post-container');
+  const filmeBox = document.getElementById('filme-info');
   container.innerHTML = '';
+  if (filmeBox && filmeBox.style.display !== 'none') {
+    container.appendChild(filmeBox);
+  }
 
   posts.forEach(post => {
     const div = document.createElement('div');
@@ -52,10 +71,8 @@ function renderPosts(posts) {
         ${post.imagem ? `<img src="${post.imagem}" class="post-image">` : ''}
         ${post.titulo ? `<h2>${post.titulo}</h2>` : ''}
         ${post.descricao ? `<p>${post.descricao}</p>` : ''}
-
         <p><span id="votos-${post.id}">${post.votos || 0}</span> curtidas</p>
         <button class="like-button" onclick="curtirPostagem(${post.id})">💗</button>
-
         <div class="comments-section">
           <p><strong>Comentários:</strong></p>
           <div id="comentarios-${post.id}" class="comment-list"></div>
@@ -69,7 +86,6 @@ function renderPosts(posts) {
   });
 }
 
-// ✅ Curtir uma postagem
 async function curtirPostagem(postId) {
   try {
     const res = await fetch(`/postagens/${postId}/curtir`, { method: 'POST' });
@@ -85,11 +101,9 @@ async function curtirPostagem(postId) {
   }
 }
 
-// ✅ Comentar em uma postagem
 async function comentarPostagem(postId) {
   const input = document.getElementById(`comentario-${postId}`);
   const texto = input.value.trim();
-
   if (!texto) return;
 
   const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -116,7 +130,6 @@ async function comentarPostagem(postId) {
   }
 }
 
-// ✅ Carrega os comentários de um post
 async function carregarComentarios(postId) {
   try {
     const res = await fetch(`/postagens/${postId}/comentarios`);
@@ -135,7 +148,6 @@ async function carregarComentarios(postId) {
   }
 }
 
-// ✅ Enviar nova postagem
 document.getElementById('post-form').addEventListener('submit', async function (e) {
   e.preventDefault();
 
@@ -149,9 +161,10 @@ document.getElementById('post-form').addEventListener('submit', async function (
   formData.append('titulo', document.getElementById('titulo').value);
   formData.append('descricao', document.getElementById('descricao').value);
   formData.append('id_usuario', usuario.id);
-
   const imagem = document.getElementById('imagem').files[0];
   if (imagem) formData.append('imagem', imagem);
+  const filme = document.getElementById('filme').value;
+  if (filme) formData.append('filme', filme);
 
   try {
     const res = await fetch('/postagens', {
@@ -172,5 +185,4 @@ document.getElementById('post-form').addEventListener('submit', async function (
   }
 });
 
-// ✅ Inicializa
 carregarPosts();
