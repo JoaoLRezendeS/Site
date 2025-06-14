@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Completar Cadastro</title>
+  <link rel="stylesheet" href="../style/cadastro.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Complete seu cadastro</h2>
+
+    <form id="completarForm">
+      <label for="nome">Nome social</label>
+      <input type="text" id="nome" required />
+
+      <label for="pronome">Pronome</label>
+      <input type="text" id="pronome" placeholder="Ela/dela" required />
+
+      <label for="genero">Identidade de gênero</label>
+      <select id="genero" required>
+        <option value="" disabled selected>Selecione seu gênero</option>
+        <option value="trans">Mulher trans / Homem trans / Não binárie trans</option>
+        <option value="lésbica">Lésbica</option>
+        <option value="gay">Gay</option>
+      </select>
+
+      <label for="nascimento">Data de nascimento</label>
+      <input type="date" id="nascimento" required />
+
+      <button type="submit">Finalizar cadastro</button>
+    </form>
+  </div>
+
+  <script src="/script/completar-cadastro.js"></script>
+</body>
+</html>

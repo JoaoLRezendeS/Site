@@ -22,7 +22,7 @@ async function testConnection() {
   }
 }
 
-// Configuração Nodemailer
+// Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -45,7 +45,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Rotas HTML
+// Rotas de HTML
 app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/cadastro', (_, res) => res.sendFile(path.join(__dirname, 'views', 'cadastro.html')));
 app.get('/home', (_, res) => res.sendFile(path.join(__dirname, 'views', 'home.html')));
@@ -53,6 +53,20 @@ app.get('/mapa', (_, res) => res.sendFile(path.join(__dirname, 'views', 'mapa.ht
 app.get('/esqueci-a-senha', (_, res) => res.sendFile(path.join(__dirname, 'views', 'esqueci-a-senha.html')));
 app.get('/recuperar-a-senha', (_, res) => res.sendFile(path.join(__dirname, 'views', 'redefinir-senha.html')));
 app.get('/filmes', (_, res) => res.sendFile(path.join(__dirname, 'views', 'filmes.html')));
+app.get('/completar-cadastro.html', (_, res) =>
+  res.sendFile(path.join(__dirname, 'views', 'completar-cadastro.html'))
+);
+
+// Buscar usuário por e-mail
+app.get('/usuarios/email/:email', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, nome FROM usuarios WHERE email = $1', [req.params.email]);
+    if (result.rows.length === 0) return res.status(404).json({ error: "Usuário não encontrado" });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar usuário por e-mail" });
+  }
+});
 
 // Gerador de ID
 function generateRandomId(length) {
@@ -60,7 +74,7 @@ function generateRandomId(length) {
   return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
-// Cadastro
+// Cadastro tradicional
 app.post('/usuarios', async (req, res) => {
   const { nome, pronome, genero, nascimento, email, senha } = req.body;
   const id = generateRandomId(9);
@@ -80,7 +94,40 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
-// Login
+// Verificar usuário (Google)
+app.post('/verificar-usuario', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+    res.json({ novoUsuario: result.rows.length === 0 });
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao verificar usuário.' });
+  }
+});
+
+// Completar cadastro (Google)
+app.post('/completar-cadastro', async (req, res) => {
+  const { nome, pronome, genero, nascimento, email } = req.body;
+  const id = generateRandomId(9);
+
+  try {
+    const query = `
+      INSERT INTO usuarios (id, nome, pronome, genero, nascimento, email)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    const values = [id, nome, pronome, genero, nascimento, email];
+    const result = await pool.query(query, values);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'E-mail já cadastrado.' });
+    }
+    res.status(500).json({ error: 'Erro ao completar cadastro.' });
+  }
+});
+
+// Login tradicional
 app.post('/login', async (req, res) => {
   const { email, senha } = req.body;
   try {
@@ -137,7 +184,7 @@ app.post('/redefinir-senha', async (req, res) => {
   }
 });
 
-// Criar postagem com suporte a `filme`
+// Criar postagem
 app.post('/postagens', upload.single('imagem'), async (req, res) => {
   const { titulo, descricao, id_usuario, filme } = req.body;
   const imagem = req.file ? `/uploads/${req.file.filename}` : null;
@@ -157,7 +204,6 @@ app.post('/postagens', upload.single('imagem'), async (req, res) => {
 // Listar postagens
 app.get('/postagens', async (req, res) => {
   const { filme } = req.query;
-
   try {
     const base = `
       SELECT p.*, u.nome
@@ -175,7 +221,7 @@ app.get('/postagens', async (req, res) => {
   }
 });
 
-// Curtir
+// Curtir postagem
 app.post('/postagens/:id/curtir', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -193,6 +239,10 @@ app.post('/postagens/:id/curtir', async (req, res) => {
 app.post('/postagens/:id/comentarios', async (req, res) => {
   const { id } = req.params;
   const { id_usuario, texto } = req.body;
+
+  if (!id_usuario || !texto) {
+    return res.status(400).json({ error: 'Comentário inválido.' });
+  }
 
   try {
     const result = await pool.query(`

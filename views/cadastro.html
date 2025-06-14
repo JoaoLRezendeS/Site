@@ -20,7 +20,12 @@
       <input type="text" id="pronome" placeholder="Ela/dela" required />
 
       <label for="genero">Identidade de gênero</label>
-      <input type="text" id="genero" placeholder="Mulher trans" required />
+      <select id="genero" required>
+        <option value="" disabled selected>Selecione seu gênero</option>
+        <option value="trans">Mulher trans / Homem trans / Não binárie trans</option>
+        <option value="lésbica">Lésbica</option>
+        <option value="gay">Gay</option>
+      </select>
 
       <label for="nascimento">Data de nascimento</label>
       <input type="date" id="nascimento" required />

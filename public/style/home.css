@@ -1,3 +1,4 @@
+/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -114,6 +115,7 @@ header {
   gap: 15px;
 }
 
+/* POSTAGEM */
 .post-card {
   display: flex;
   flex-direction: column;
@@ -123,46 +125,37 @@ header {
   border: 1px solid #d0d8f0;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  max-width: 720px;
+  margin: 0 auto;
 }
 
+/* CAPA DO FILME */
 .filme-info-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  position: relative;
+  width: fit-content;
+  margin-bottom: 10px;
 }
 
 .filme-info-wrapper img {
-  width: 50px;
-  height: 75px;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.username {
-  font-weight: bold;
-  color: #0a2463;
-  font-size: 0.95em;
-  margin-right: 5px;
-}
-
-.post-date {
-  font-size: 0.8em;
-  color: #888;
-}
-
-.post-image {
-  max-width: 100%;
-  max-height: 300px;
+  width: 160px;
+  height: auto;
   border-radius: 6px;
   object-fit: cover;
-  margin: 5px 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.post-content {
-  width: 100%;
+.filme-info-wrapper strong {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+  color: white;
+  background-color: rgba(0,0,0,0.6);
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 0.9rem;
 }
 
+/* CONTEÚDO DO POST */
 .post-content h2 {
   font-size: 1.1em;
   color: #0a2463;
@@ -174,6 +167,15 @@ header {
   color: #555;
 }
 
+.post-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin: 5px 0;
+}
+
+/* AÇÕES DO POST */
 .post-actions {
   display: flex;
   align-items: center;
@@ -183,27 +185,35 @@ header {
   border-top: 1px solid #eee;
 }
 
-.btn-curtir {
+/* LIKE */
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1em;
   color: #d8315b;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  padding: 0;
-  line-height: 1;
+  transition: transform 0.2s ease, color 0.2s ease;
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
-.btn-curtir:hover {
-  transform: scale(1.2);
+.like-button:hover {
+  transform: translateY(-2px);
+  color: #b62b4f;
 }
 
-.like-count,
-.comment-info {
-  font-size: 0.85em;
-  color: #666;
+.like-button .heart-icon {
+  font-size: 1.5em;
 }
 
+.like-button .like-count {
+  font-weight: bold;
+}
+
+/* COMENTÁRIOS */
 .comentarios-box {
   margin-top: 10px;
   background-color: #f8faff;
@@ -237,7 +247,7 @@ header {
   font-size: 0.9rem;
 }
 
-.comment-input-area button {
+.comment-button {
   padding: 8px 12px;
   background-color: #0a2463;
   color: white;
@@ -246,42 +256,43 @@ header {
   cursor: pointer;
   font-weight: bold;
   font-size: 0.9rem;
+  transition: background-color 0.3s ease;
 }
 
-.comment-input-area button:hover {
+.comment-button:hover {
   background-color: #081d4f;
 }
 
+/* FORMULÁRIO DE NOVA POSTAGEM */
 .form-section {
   margin: 20px auto;
-  padding: 25px;
+  padding: 20px;
   background: white;
   border-radius: 8px;
   border: 1px solid #d0d8f0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-width: 600px;
+  max-width: 720px;
 }
 
 .form-section h2 {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: #0a2463;
-  font-size: 1.4em;
+  font-size: 1.3rem;
   text-align: center;
 }
 
 .form-section input,
 .form-section textarea {
   width: 100%;
-  margin-bottom: 12px;
-  padding: 10px 12px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 1em;
+  font-size: 1rem;
 }
 
 .form-section textarea {
-  min-height: 80px;
-  resize: vertical;
+  min-height: 70px;
 }
 
 input[type="file"] {
@@ -306,7 +317,7 @@ input[type="file"] {
   background: #b62b4f;
 }
 
-/* Responsividade */
+/* RESPONSIVO */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -360,56 +371,5 @@ input[type="file"] {
   .form-section {
     margin: 15px;
     padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar a {
-    font-size: 0.9rem;
-  }
-
-  .header-spacer {
-    height: 100px;
-  }
-
-  .sidebar button {
-    font-size: 0.85rem;
-    padding: 8px 10px;
-  }
-
-  .post-content h2 {
-    font-size: 0.95em;
-  }
-
-  .btn-curtir {
-    font-size: 1.3rem;
-  }
-
-  .comment-info {
-    font-size: 0.75em;
-  }
-
-  .comentarios-box p {
-    font-size: 0.8rem;
-  }
-
-  #filme-info {
-    text-align: center;
-    background-color: #ffffff;
-    padding: 15px 25px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #2563eb;
-  }
-
-  #filme-info h2 {
-    font-size: 1.5rem;
-    color: #0a2463;
-  }
-
-  #filme-info span {
-    color: #2563eb;
-    font-weight: bold;
   }
 }

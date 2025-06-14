@@ -31,8 +31,8 @@ if (cadastroForm) {
         console.log('Usuário cadastrado com sucesso (frontend):', data);
         alert('Cadastro realizado com sucesso!');
 
-        // ✅ Salva o usuário no localStorage
-        localStorage.setItem("usuario", JSON.stringify(data));
+        // ❗ SE o backend retorna { user: { ... } }, salve assim:
+        localStorage.setItem("usuario", JSON.stringify(data.user));
 
         window.location.href = "/";
       } else {
@@ -73,9 +73,7 @@ if (loginForm) {
       console.log('Dados da resposta:', data);
 
       if (response.ok) {
-        // ✅ Salva o usuário logado no localStorage
         localStorage.setItem("usuario", JSON.stringify(data.user));
-
         window.location.href = "/home";
       } else {
         console.error('Erro no login:', data.error);

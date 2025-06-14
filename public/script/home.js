@@ -2,32 +2,31 @@ let todosPosts = [];
 
 async function carregarPosts() {
   try {
-    // Esconde a seção até saber se é de um filme
-    document.getElementById('filme-info').style.display = 'none';
+    document.getElementById("filme-info").style.display = "none";
 
     const params = new URLSearchParams(window.location.search);
-    const filme = params.get('filme');
-    const url = filme ? `/postagens?filme=${encodeURIComponent(filme)}` : '/postagens';
+    const filme = params.get("filme");
+    const url = filme ? `/postagens?filme=${encodeURIComponent(filme)}` : "/postagens";
 
     const res = await fetch(url);
     const posts = await res.json();
     todosPosts = posts;
-    renderPosts(posts);
+    renderPosts(posts, filme);
 
     if (filme) {
-      document.getElementById('filme-info').style.display = 'block';
-      document.getElementById('filme-nome').textContent = filme;
+      document.getElementById("filme-info").style.display = "block";
+      document.getElementById("filme-nome").textContent = `Comentando sobre: ${filme}`;
 
       const imgNome = filme.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replaceAll(' ', '-');
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .replaceAll(" ", "-");
 
-      document.getElementById('filme-capa').src = `/uploads/${imgNome}.jpg`;
-      document.getElementById('filme').value = filme;
+      document.getElementById("filme-capa").src = `/uploads/${imgNome}.jpg`;
+      document.getElementById("filme").value = filme;
     }
 
   } catch (err) {
-    console.error('Erro ao carregar posts:', err);
+    console.error("Erro ao carregar posts:", err);
   }
 }
 
@@ -35,15 +34,15 @@ function filtrar(tipo) {
   let filtrados = [...todosPosts];
   const agora = new Date();
 
-  if (tipo === 'populares') {
+  if (tipo === "populares") {
     filtrados = filtrados.filter(post => (post.votos || 0) > 4).sort((a, b) => (b.votos || 0) - (a.votos || 0));
-  } else if (tipo === 'recentes') {
+  } else if (tipo === "recentes") {
     filtrados = filtrados.filter(post => {
       const dataPost = new Date(post.data);
       const diffHoras = (agora - dataPost) / (1000 * 60 * 60);
       return diffHoras <= 24;
     }).sort((a, b) => new Date(b.data) - new Date(a.data));
-  } else if (tipo === 'mes') {
+  } else if (tipo === "mes") {
     filtrados = filtrados.filter(post => {
       const dataPost = new Date(post.data);
       return dataPost.getMonth() === agora.getMonth() &&
@@ -51,53 +50,90 @@ function filtrar(tipo) {
     });
   }
 
-  renderPosts(filtrados);
+  const params = new URLSearchParams(window.location.search);
+  const filme = params.get("filme");
+  renderPosts(filtrados, filme);
 }
 
-function renderPosts(posts) {
-  const container = document.getElementById('post-container');
-  const filmeBox = document.getElementById('filme-info');
-  container.innerHTML = '';
-  if (filmeBox && filmeBox.style.display !== 'none') {
-    container.appendChild(filmeBox);
-  }
+function renderPosts(posts, filmeEmContexto = null) {
+  const container = document.getElementById("post-container");
+  container.innerHTML = "";
 
   posts.forEach(post => {
-    const div = document.createElement('div');
-    div.className = 'post-card';
+    const div = document.createElement("div");
+    div.className = "post-card";
+
+    const temFilme = !!post.filme;
+    const imgNome = temFilme
+      ? post.filme.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replaceAll(" ", "-")
+      : "";
+
+    const capaFilme = temFilme ? `
+      <div class="filme-info-wrapper">
+        <div class="filme-overlay">
+          <span>${post.filme}</span>
+        </div>
+        <img src="/uploads/${imgNome}.jpg" alt="${post.filme}" class="filme-capa-post">
+      </div>
+    ` : "";
+
     div.innerHTML = `
       <div class="post-content">
-        <p><strong>${post.nome || 'Usuário'}</strong></p>
-        ${post.imagem ? `<img src="${post.imagem}" class="post-image">` : ''}
-        ${post.titulo ? `<h2>${post.titulo}</h2>` : ''}
-        ${post.descricao ? `<p>${post.descricao}</p>` : ''}
-        <p><span id="votos-${post.id}">${post.votos || 0}</span> curtidas</p>
-        <button class="like-button" onclick="curtirPostagem(${post.id})">💗</button>
-        <div class="comments-section">
+        <p><strong>${post.nome || "Usuário"}</strong></p>
+        ${capaFilme}
+        ${post.imagem ? `<img src="${post.imagem}" class="post-image">` : ""}
+        ${post.titulo ? `<h2>${post.titulo}</h2>` : ""}
+        ${post.descricao ? `<p>${post.descricao}</p>` : ""}
+        <div class="post-actions">
+          <button class="like-button" data-post-id="${post.id}">
+            <span class="heart-icon">❤️</span>
+            <span id="votos-${post.id}" class="like-count">${post.votos || 0}</span>
+          </button>
+        </div>
+        <div class="comentarios-box">
           <p><strong>Comentários:</strong></p>
           <div id="comentarios-${post.id}" class="comment-list"></div>
-          <input type="text" id="comentario-${post.id}" placeholder="Escreva um comentário..." />
-          <button onclick="comentarPostagem(${post.id})">Comentar</button>
+          <div class="comment-input-area">
+            <input type="text" id="comentario-${post.id}" placeholder="Escreva um comentário..." />
+            <button class="comment-button" onclick="comentarPostagem(${post.id})">Comentar</button>
+          </div>
         </div>
       </div>
     `;
+
     container.appendChild(div);
     carregarComentarios(post.id);
+
+    const likeButton = div.querySelector(`.like-button[data-post-id="${post.id}"]`);
+    if (likeButton) {
+      likeButton.addEventListener("click", () => curtirPostagem(post.id));
+    }
   });
 }
 
 async function curtirPostagem(postId) {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    alert("Você precisa estar logado para curtir.");
+    return;
+  }
+
   try {
-    const res = await fetch(`/postagens/${postId}/curtir`, { method: 'POST' });
+    const res = await fetch(`/postagens/${postId}/curtir`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id_usuario: usuario.id })
+    });
+
     if (res.ok) {
       const json = await res.json();
       document.getElementById(`votos-${postId}`).textContent = json.votos;
     } else {
-      alert('Erro ao curtir postagem.');
+      alert("Erro ao curtir postagem.");
     }
   } catch (err) {
-    console.error('Erro ao curtir:', err);
-    alert('Erro ao curtir postagem.');
+    console.error("Erro ao curtir:", err);
+    alert("Erro ao curtir postagem.");
   }
 }
 
@@ -106,7 +142,7 @@ async function comentarPostagem(postId) {
   const texto = input.value.trim();
   if (!texto) return;
 
-  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
   if (!usuario) {
     alert("Você precisa estar logado.");
     return;
@@ -114,19 +150,19 @@ async function comentarPostagem(postId) {
 
   try {
     const res = await fetch(`/postagens/${postId}/comentarios`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id_usuario: usuario.id, texto })
     });
 
     if (res.ok) {
-      input.value = '';
+      input.value = "";
       carregarComentarios(postId);
     } else {
-      alert('Erro ao comentar.');
+      alert("Erro ao comentar.");
     }
   } catch (err) {
-    console.error('Erro ao comentar:', err);
+    console.error("Erro ao comentar:", err);
   }
 }
 
@@ -135,53 +171,53 @@ async function carregarComentarios(postId) {
     const res = await fetch(`/postagens/${postId}/comentarios`);
     const comentarios = await res.json();
     const container = document.getElementById(`comentarios-${postId}`);
-    container.innerHTML = '';
+    container.innerHTML = "";
 
     comentarios.forEach(c => {
-      const p = document.createElement('p');
-      p.className = 'comment';
+      const p = document.createElement("p");
+      p.className = "comment";
       p.textContent = `${c.nome}: ${c.texto}`;
       container.appendChild(p);
     });
   } catch (err) {
-    console.error('Erro ao carregar comentários:', err);
+    console.error("Erro ao carregar comentários:", err);
   }
 }
 
-document.getElementById('post-form').addEventListener('submit', async function (e) {
+document.getElementById("post-form").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
   if (!usuario) {
     alert("Você precisa estar logado.");
     return;
   }
 
   const formData = new FormData();
-  formData.append('titulo', document.getElementById('titulo').value);
-  formData.append('descricao', document.getElementById('descricao').value);
-  formData.append('id_usuario', usuario.id);
-  const imagem = document.getElementById('imagem').files[0];
-  if (imagem) formData.append('imagem', imagem);
-  const filme = document.getElementById('filme').value;
-  if (filme) formData.append('filme', filme);
+  formData.append("titulo", document.getElementById("titulo").value);
+  formData.append("descricao", document.getElementById("descricao").value);
+  formData.append("id_usuario", usuario.id);
+  const imagem = document.getElementById("imagem").files[0];
+  if (imagem) formData.append("imagem", imagem);
+  const filme = document.getElementById("filme").value;
+  if (filme) formData.append("filme", filme);
 
   try {
-    const res = await fetch('/postagens', {
-      method: 'POST',
+    const res = await fetch("/postagens", {
+      method: "POST",
       body: formData
     });
 
     if (res.ok) {
-      alert('Post enviado com sucesso!');
+      alert("Post enviado com sucesso!");
       carregarPosts();
-      document.getElementById('post-form').reset();
+      document.getElementById("post-form").reset();
     } else {
-      alert('Erro ao enviar post.');
+      alert("Erro ao enviar post.");
     }
   } catch (err) {
-    console.error('Erro ao enviar post:', err);
-    alert('Erro no envio.');
+    console.error("Erro ao enviar post:", err);
+    alert("Erro no envio.");
   }
 });
 

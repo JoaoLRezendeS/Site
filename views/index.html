@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Salus</title>
-  <link rel="stylesheet" href="../style/style.css"/>
+
+  <!-- Estilo -->
+  <link rel="stylesheet" href="/style/style.css" />
+
+  <!-- Scripts do Google Login -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </head>
@@ -12,20 +16,24 @@
   <div class="container">
     <h1>Salus</h1>
     <h2>Login</h2>
+
     <form id="loginForm">
       <input type="email" id="email" placeholder="Endereço de e-mail" required />
       <input type="password" id="senha" placeholder="Senha" required />
       <button type="submit">Entrar na conta</button>
     </form>
+
     <a class="link" href="/esqueci-a-senha">Esqueceu sua senha?</a>
     <div class="link"><a href="/cadastro">Criar nova conta</a></div>
 
+    <!-- Google Login -->
     <div id="g_id_onload"
          data-client_id="577278743325-vi8qf66g0945elfuosnrn729gb8196ui.apps.googleusercontent.com"
          data-context="signup"
          data-ux_mode="popup"
          data-callback="handleCredentialResponse">
     </div>
+
     <div class="g_id_signin"
          data-type="standard"
          data-shape="rectangular"
@@ -35,8 +43,8 @@
     </div>
   </div>
 
-  <!-- Caminho corrigido -->
-  <script src="../script/fetch.js"></script>
-  <script src="../script/login-google.js"></script>
+  <!-- Scripts do Projeto -->
+  <script src="/script/fetch.js"></script>
+  <script src="/script/login-google.js"></script>
 </body>
 </html>

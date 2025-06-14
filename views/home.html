@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Salus T - Comunidade LGBTQIA+</title>
-  <link rel="stylesheet" href="../style/home.css" />
+  <link rel="stylesheet" href="/style/home.css" />
 </head>
 <body>
 
@@ -14,6 +14,7 @@
       <div class="nav-links">
         <a href="/mapa">Mapa</a>
         <a href="/filmes">Filmes</a>
+        <a href="/home">Postagens</a>
       </div>
     </nav>
   </header>
@@ -21,8 +22,7 @@
   <div class="header-spacer"></div>
 
   <div class="container">
-
-    <!-- Barra lateral de filtros -->
+    
     <aside class="sidebar">
       <nav>
         <ul>
@@ -33,32 +33,26 @@
       </nav>
     </aside>
 
-    <!-- Área principal de posts -->
-    <main class="main-content" id="post-container">
-      <!-- Os posts serão inseridos aqui dinamicamente -->
+    <main class="main-content">
+      
+      <section id="filme-info" style="display: none;">
+        <img id="filme-capa" src="" alt="Capa do filme" class="filme-capa" />
+        <h2 id="filme-nome"></h2>
+      </section>
+
+      <form id="post-form" class="form-section" enctype="multipart/form-data">
+        <h2>Nova Postagem</h2>
+        <input type="text" id="titulo" placeholder="Título da postagem" required />
+        <textarea id="descricao" placeholder="Escreva sua mensagem..." required></textarea>
+        <input type="file" id="imagem" accept="image/*" />
+        <input type="hidden" id="filme" />
+        <button type="submit">Publicar</button>
+      </form>
+
+      <section id="post-container"></section>
     </main>
 
   </div>
-
-  <!-- 🔽 Seção que mostra a imagem e nome do filme selecionado -->
-  <div id="filme-info" class="form-section" style="display: none;">
-    <div class="filme-info-wrapper">
-      <img id="filme-capa" src="" alt="Capa do Filme" />
-      <h2>Comentando sobre: <span id="filme-nome"></span></h2>
-    </div>
-  </div>
-  <input type="hidden" id="filme" name="filme" />
-
-  <!-- Formulário de nova postagem -->
-  <section class="form-section">
-    <h2>Criar nova postagem</h2>
-    <form id="post-form" enctype="multipart/form-data">
-      <input type="text" id="titulo" name="titulo" placeholder="Título (opcional)">
-      <textarea id="descricao" name="descricao" placeholder="Descrição (opcional)"></textarea>
-      <input type="file" id="imagem" name="imagem" accept="image/*">
-      <button type="submit">Publicar</button>
-    </form>
-  </section>
 
   <script src="/script/home.js"></script>
 </body>

@@ -183,6 +183,37 @@ header {
   border-left: 5px solid #2563eb;
 }
 
+/* Botões de recomendação */
+.botao-recomendacao,
+.botao-ver-todos {
+  display: block;
+  margin: 1rem auto 0.5rem auto;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.botao-recomendacao {
+  background-color: #2563eb;
+  color: white;
+}
+
+.botao-recomendacao:hover {
+  background-color: #1d4ed8;
+}
+
+.botao-ver-todos {
+  background-color: #9ca3af;
+  color: white;
+}
+
+.botao-ver-todos:hover {
+  background-color: #6b7280;
+}
+
 /* Responsivo */
 @media (max-width: 600px) {
   .card img {
