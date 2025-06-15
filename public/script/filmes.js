@@ -54,6 +54,7 @@ function gerarNomeImagem(filme) {
     "vidas-que-transcendem": "vidas-que-transcendem.jpg",
     "segura-essa-pose": "segura-essa-pose.jpg",
     "paloma": "paloma.jpg",
+    "emilia-perez": "emilia-perez.jpg",
     "maria-luiza": "maria-luiza.jpg"
   };
 
@@ -118,6 +119,7 @@ function criarPlaceholder(titulo, ano) {
 // Base de dados completa de filmes LGBTQIA+ organizados por categoria
 const filmesPorCategoria = {
   trans: [
+    { titulo: "Emilia Perez", ano: 2024, categoria: "trans" },
     { titulo: "Tudo Sobre Minha Mãe", ano: 1999, categoria: "trans" },
     { titulo: "Pose", ano: "2018–2021", categoria: "trans" },
     { titulo: "Vidas Que Transcendem", ano: 2024, categoria: "trans" },
