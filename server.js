@@ -261,6 +261,91 @@ app.post("/postagens/:id/comentarios", async (req, res) => {
   }
 });
 
+// Rota para editar postagem
+app.put("/postagens/:id", upload.single("imagem"), async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descricao, id_usuario, filme } = req.body;
+  
+  if (!id_usuario) {
+    return res.status(400).json({ error: "ID do usuário é obrigatório." });
+  }
+  
+  try {
+    // Verificar se a postagem existe e se pertence ao usuário
+    const postagemResult = await pool.query(
+      "SELECT * FROM postagens WHERE id = $1",
+      [id]
+    );
+    
+    if (postagemResult.rowCount === 0) {
+      return res.status(404).json({ error: "Postagem não encontrada." });
+    }
+    
+    const postagem = postagemResult.rows[0];
+    
+    // Verificar se o usuário é o autor da postagem
+    if (postagem.id_usuario !== id_usuario) {
+      return res.status(403).json({ error: "Você só pode editar suas próprias postagens." });
+    }
+    
+    // Se uma nova imagem foi enviada, usar ela, senão manter a anterior
+    const imagem = req.file ? `/uploads/${req.file.filename}` : postagem.imagem;
+    
+    // Atualizar a postagem
+    const result = await pool.query(
+      `UPDATE postagens 
+       SET titulo = $1, descricao = $2, imagem = $3, filme = $4
+       WHERE id = $5 RETURNING *`,
+      [titulo, descricao, imagem, filme, id]
+    );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Erro ao editar postagem:", err);
+    res.status(500).json({ error: "Erro ao editar postagem." });
+  }
+});
+
+// Rota para deletar postagem
+app.delete("/postagens/:id", async (req, res) => {
+  const { id } = req.params;
+  const { id_usuario } = req.body;
+  
+  if (!id_usuario) {
+    return res.status(400).json({ error: "ID do usuário é obrigatório." });
+  }
+  
+  try {
+    // Verificar se a postagem existe e se pertence ao usuário
+    const postagemResult = await pool.query(
+      "SELECT * FROM postagens WHERE id = $1",
+      [id]
+    );
+    
+    if (postagemResult.rowCount === 0) {
+      return res.status(404).json({ error: "Postagem não encontrada." });
+    }
+    
+    const postagem = postagemResult.rows[0];
+    
+    // Verificar se o usuário é o autor da postagem
+    if (postagem.id_usuario !== id_usuario) {
+      return res.status(403).json({ error: "Você só pode deletar suas próprias postagens." });
+    }
+    
+    // Deletar comentários da postagem primeiro (devido à foreign key)
+    await pool.query("DELETE FROM comentarios WHERE id_postagem = $1", [id]);
+    
+    // Deletar a postagem
+    await pool.query("DELETE FROM postagens WHERE id = $1", [id]);
+    
+    res.json({ message: "Postagem deletada com sucesso." });
+  } catch (err) {
+    console.error("Erro ao deletar postagem:", err);
+    res.status(500).json({ error: "Erro ao deletar postagem." });
+  }
+});
+
 app.get("/postagens/:id/comentarios", async (req, res) => {
   try {
     const result = await pool.query(

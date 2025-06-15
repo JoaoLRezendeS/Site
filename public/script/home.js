@@ -111,9 +111,23 @@ function renderPosts(posts, filmeEmContexto = null) {
         <img src="/uploads/${imgNome}" alt="${post.filme}" class="filme-capa-post">
       </div>` : "";
 
+    // Verificar se o usuário logado é o autor da postagem
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const isAutor = usuario && usuario.id === post.id_usuario;
+    
+    const botoesAutor = isAutor ? `
+      <div class="post-author-actions">
+        <button class="edit-button" onclick="editarPostagem(${post.id})">✏️ Editar</button>
+        <button class="delete-button" onclick="deletarPostagem(${post.id})">🗑️ Apagar</button>
+      </div>
+    ` : "";
+
     div.innerHTML = `
       <div class="post-content">
-        <p><strong>${post.nome || "Usuário"}</strong></p>
+        <div class="post-header">
+          <p><strong>${post.nome || "Usuário"}</strong></p>
+          ${botoesAutor}
+        </div>
         ${capaFilme}
         ${post.imagem ? `<img src="${post.imagem}" class="post-image">` : ""}
         ${post.titulo ? `<h2>${post.titulo}</h2>` : ""}
@@ -282,3 +296,131 @@ document.getElementById("post-form").addEventListener("submit", async function (
 if (verificarAutenticacao()) {
   carregarPosts();
 }
+
+
+// Função para deletar postagem
+async function deletarPostagem(postId) {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    alert("Você precisa estar logado para deletar postagens.");
+    return;
+  }
+
+  if (!confirm("Tem certeza que deseja apagar esta postagem? Esta ação não pode ser desfeita.")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/postagens/${postId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id_usuario: usuario.id })
+    });
+
+    if (response.ok) {
+      alert("Postagem deletada com sucesso!");
+      carregarPosts(); // Recarregar posts
+    } else {
+      const error = await response.json();
+      alert(error.error || "Erro ao deletar postagem.");
+    }
+  } catch (error) {
+    console.error("Erro ao deletar postagem:", error);
+    alert("Erro ao deletar postagem.");
+  }
+}
+
+// Função para editar postagem
+async function editarPostagem(postId) {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    alert("Você precisa estar logado para editar postagens.");
+    return;
+  }
+
+  // Buscar dados da postagem atual
+  try {
+    const response = await fetch("/postagens");
+    const posts = await response.json();
+    const post = posts.find(p => p.id === postId);
+    
+    if (!post) {
+      alert("Postagem não encontrada.");
+      return;
+    }
+
+    // Mostrar modal de edição
+    const modal = document.createElement("div");
+    modal.className = "edit-modal";
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Editar Postagem</h3>
+          <button class="close-modal" onclick="fecharModalEdicao()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="edit-title" placeholder="Título da postagem" value="${post.titulo || ''}" />
+          <textarea id="edit-description" placeholder="Descrição da postagem">${post.descricao || ''}</textarea>
+          <input type="file" id="edit-image" accept="image/*" />
+          <div class="modal-actions">
+            <button onclick="salvarEdicao(${postId})" class="save-button">Salvar</button>
+            <button onclick="fecharModalEdicao()" class="cancel-button">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+  } catch (error) {
+    console.error("Erro ao carregar dados da postagem:", error);
+    alert("Erro ao carregar dados da postagem.");
+  }
+}
+
+// Função para salvar edição
+async function salvarEdicao(postId) {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const titulo = document.getElementById("edit-title").value;
+  const descricao = document.getElementById("edit-description").value;
+  const imagem = document.getElementById("edit-image").files[0];
+
+  const formData = new FormData();
+  formData.append("titulo", titulo);
+  formData.append("descricao", descricao);
+  formData.append("id_usuario", usuario.id);
+  formData.append("filme", ""); // Manter filme vazio por enquanto
+  
+  if (imagem) {
+    formData.append("imagem", imagem);
+  }
+
+  try {
+    const response = await fetch(`/postagens/${postId}`, {
+      method: "PUT",
+      body: formData
+    });
+
+    if (response.ok) {
+      alert("Postagem editada com sucesso!");
+      fecharModalEdicao();
+      carregarPosts(); // Recarregar posts
+    } else {
+      const error = await response.json();
+      alert(error.error || "Erro ao editar postagem.");
+    }
+  } catch (error) {
+    console.error("Erro ao editar postagem:", error);
+    alert("Erro ao editar postagem.");
+  }
+}
+
+// Função para fechar modal de edição
+function fecharModalEdicao() {
+  const modal = document.querySelector(".edit-modal");
+  if (modal) {
+    modal.remove();
+  }
+}
+
