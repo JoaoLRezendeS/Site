@@ -1,0 +1,33 @@
+.perfil-container {
+  max-width: 500px;
+  margin: 60px auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #2563eb;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.info {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.botao-voltar {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.botao-voltar button {
+  padding: 0.6rem 1.2rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}

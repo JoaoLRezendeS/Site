@@ -7,6 +7,7 @@ if (cadastroForm) {
     const nome = document.getElementById('nome').value;
     const pronome = document.getElementById('pronome').value;
     const genero = document.getElementById('genero').value;
+    const sexualidade = document.getElementById('sexualidade').value;
     const nascimento = document.getElementById('nascimento').value;
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
@@ -19,7 +20,7 @@ if (cadastroForm) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ nome, pronome, genero, nascimento, email, senha })
+        body: JSON.stringify({ nome, pronome, genero, sexualidade, nascimento, email, senha })
       });
 
       console.log('Resposta recebida do servidor. Status:', response.status, 'OK:', response.ok);
@@ -30,10 +31,7 @@ if (cadastroForm) {
       if (response.ok) {
         console.log('Usuário cadastrado com sucesso (frontend):', data);
         alert('Cadastro realizado com sucesso!');
-
-        // ❗ SE o backend retorna { user: { ... } }, salve assim:
         localStorage.setItem("usuario", JSON.stringify(data.user));
-
         window.location.href = "/";
       } else {
         console.error('Erro no cadastro (frontend):', data.error);

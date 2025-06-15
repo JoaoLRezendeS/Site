@@ -1,5 +1,40 @@
 let todosPosts = [];
 
+// Verificar se o usuário está logado
+function verificarAutenticacao() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    alert("Você precisa estar logado para acessar esta página.");
+    window.location.href = "/";
+    return false;
+  }
+  return true;
+}
+
+function gerarNomeImagem(filme) {
+  if (!filme) return "";
+
+  const mapaImagens = {
+    "a-garota-dinamarquesa": "garota-dinamarquesa.jpg",
+    "girl": "girl.jpg",
+    "retrato-de-uma-jovem-em-chamas": "jovem-chamas.jpg",
+    "marsha-p-johnson": "marsha.jpg",
+    "me-chame-pelo-seu-nome": "me-chame.jpg",
+    "my-days-of-mercy": "my-days-of-mercy.jpg",
+    "rafiki": "rafiki.jpg",
+    "tangerine": "tangerine.jpg",
+    "tomboy": "tomboy.jpg",
+    "transamerica": "transamerica.jpg"
+  };
+
+  const chave = filme.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s-]/g, "") // remove pontuação
+    .replaceAll(" ", "-");
+
+  return mapaImagens[chave] || `${chave}.jpg`;
+}
+
 async function carregarPosts() {
   try {
     document.getElementById("filme-info").style.display = "none";
@@ -8,25 +43,30 @@ async function carregarPosts() {
     const filme = params.get("filme");
     const url = filme ? `/postagens?filme=${encodeURIComponent(filme)}` : "/postagens";
 
+    console.log("📥 Carregando posts de:", url);
+
     const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Erro ${res.status}: ${res.statusText}`);
+    }
+    
     const posts = await res.json();
+    console.log("✅ Posts carregados:", posts.length);
     todosPosts = posts;
     renderPosts(posts, filme);
 
     if (filme) {
-      document.getElementById("filme-info").style.display = "block";
+      document.getElementById("filme-info").style.display = "flex";
       document.getElementById("filme-nome").textContent = `Comentando sobre: ${filme}`;
 
-      const imgNome = filme.toLowerCase()
-        .normalize("NFD").replace(/[̀-ͯ]/g, "")
-        .replaceAll(" ", "-");
-
-      document.getElementById("filme-capa").src = `/uploads/${imgNome}.jpg`;
+      const nomeImagem = gerarNomeImagem(filme);
+      document.getElementById("filme-capa").src = `/uploads/${nomeImagem}`;
       document.getElementById("filme").value = filme;
     }
 
   } catch (err) {
-    console.error("Erro ao carregar posts:", err);
+    console.error("❌ Erro ao carregar posts:", err);
+    alert("Erro ao carregar posts. Tente recarregar a página.");
   }
 }
 
@@ -64,18 +104,12 @@ function renderPosts(posts, filmeEmContexto = null) {
     div.className = "post-card";
 
     const temFilme = !!post.filme;
-    const imgNome = temFilme
-      ? post.filme.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replaceAll(" ", "-")
-      : "";
+    const imgNome = temFilme ? gerarNomeImagem(post.filme) : "";
 
     const capaFilme = temFilme ? `
-      <div class="filme-info-wrapper">
-        <div class="filme-overlay">
-          <span>${post.filme}</span>
-        </div>
-        <img src="/uploads/${imgNome}.jpg" alt="${post.filme}" class="filme-capa-post">
-      </div>
-    ` : "";
+      <div class="filme-info-wrapper" style="justify-content: center;">
+        <img src="/uploads/${imgNome}" alt="${post.filme}" class="filme-capa-post">
+      </div>` : "";
 
     div.innerHTML = `
       <div class="post-content">
@@ -189,18 +223,37 @@ document.getElementById("post-form").addEventListener("submit", async function (
 
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   if (!usuario) {
-    alert("Você precisa estar logado.");
+    alert("Você precisa estar logado para criar posts.");
+    window.location.href = "/";
     return;
   }
 
+  const titulo = document.getElementById("titulo").value.trim();
+  const descricao = document.getElementById("descricao").value.trim();
+
+  if (!titulo || !descricao) {
+    alert("Por favor, preencha o título e a descrição.");
+    return;
+  }
+
+  console.log("📝 Criando novo post...");
+
   const formData = new FormData();
-  formData.append("titulo", document.getElementById("titulo").value);
-  formData.append("descricao", document.getElementById("descricao").value);
+  formData.append("titulo", titulo);
+  formData.append("descricao", descricao);
   formData.append("id_usuario", usuario.id);
+  
   const imagem = document.getElementById("imagem").files[0];
-  if (imagem) formData.append("imagem", imagem);
+  if (imagem) {
+    console.log("🖼️ Anexando imagem:", imagem.name);
+    formData.append("imagem", imagem);
+  }
+  
   const filme = document.getElementById("filme").value;
-  if (filme) formData.append("filme", filme);
+  if (filme) {
+    console.log("🎬 Post relacionado ao filme:", filme);
+    formData.append("filme", filme);
+  }
 
   try {
     const res = await fetch("/postagens", {
@@ -209,16 +262,23 @@ document.getElementById("post-form").addEventListener("submit", async function (
     });
 
     if (res.ok) {
+      const novoPost = await res.json();
+      console.log("✅ Post criado com sucesso:", novoPost);
       alert("Post enviado com sucesso!");
       carregarPosts();
       document.getElementById("post-form").reset();
     } else {
-      alert("Erro ao enviar post.");
+      const erro = await res.json();
+      console.error("❌ Erro ao criar post:", erro);
+      alert("Erro ao enviar post: " + (erro.error || "Tente novamente."));
     }
   } catch (err) {
-    console.error("Erro ao enviar post:", err);
-    alert("Erro no envio.");
+    console.error("❌ Erro na requisição:", err);
+    alert("Erro no envio. Verifique sua conexão e tente novamente.");
   }
 });
 
-carregarPosts();
+// Verificar autenticação ao carregar a página
+if (verificarAutenticacao()) {
+  carregarPosts();
+}

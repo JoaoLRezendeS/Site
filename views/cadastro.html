@@ -3,59 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadastro</title>
-  <link rel="stylesheet" href="../style/cadastro.css" />
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+  <title>Cadastro - Salus</title>
+  <link rel="stylesheet" href="/style/cadastro.css" />
 </head>
 <body>
   <div class="container">
-    <h2>Preencha as informações abaixo para se cadastrar na plataforma.</h2>
+    <h1>Salus</h1>
+    <h2>Cadastro</h2>
 
     <form id="cadastroForm">
-      <label for="nome">Nome social</label>
-      <input type="text" id="nome" required />
-
-      <label for="pronome">Pronome</label>
-      <input type="text" id="pronome" placeholder="Ela/dela" required />
-
-      <label for="genero">Identidade de gênero</label>
+      <input type="text" id="nome" placeholder="Nome social" required />
+      <input type="text" id="pronome" placeholder="Pronome (ex: ela/dela)" required />
+      
       <select id="genero" required>
         <option value="" disabled selected>Selecione seu gênero</option>
-        <option value="trans">Mulher trans / Homem trans / Não binárie trans</option>
-        <option value="lésbica">Lésbica</option>
-        <option value="gay">Gay</option>
+        <option value="Feminino">Feminino</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Homem trans">Homem trans</option>
+        <option value="Mulher trans">Mulher trans</option>
+        <option value="Não binário">Não binário</option>
       </select>
 
-      <label for="nascimento">Data de nascimento</label>
+      <select id="sexualidade" required>
+        <option disabled selected>Selecione sua sexualidade</option>
+        <option value="Heterossexual">Heterossexual</option>
+        <option value="Homossexual">Homossexual</option>
+        <option value="Bissexual">Bissexual</option>
+        <option value="Pansexual">Pansexual</option>
+        <option value="Assexual">Assexual</option>
+        <option value="Demissexual">Demissexual</option>
+        <option value="Arromântico">Arromântico</option>
+        <option value="Poliromântico">Poliromântico</option>
+        <option value="Polissexual">Polissexual</option>
+        <option value="Sapiossexual">Sapiossexual</option>
+        <option value="Graysexual">Graysexual</option>
+        <option value="Skoliosexual">Skoliosexual</option>
+        <option value="Androssexual">Androssexual</option>
+        <option value="Ginessexual">Ginessexual</option>
+        <option value="Queer">Queer</option>
+      </select>
+
       <input type="date" id="nascimento" required />
-
-      <label for="email">E-mail</label>
-      <input type="email" id="email" required />
-
-      <label for="senha">Senha</label>
-      <input type="password" id="senha" required />
-
-      <button type="submit" href="/home">Cadastrar</button>
+      <input type="email" id="email" placeholder="Endereço de e-mail" required />
+      <input type="password" id="senha" placeholder="Senha" required />
+      <input type="password" id="confirmarSenha" placeholder="Confirmar senha" required />
+      
+      <button type="submit">Criar conta</button>
     </form>
 
-    <p>Já tem uma conta? <a href="/">Faça login</a></p>
-
-    <div id="g_id_onload"
-         data-client_id="577278743325-vi8qf66g0945elfuosnrn729gb8196ui.apps.googleusercontent.com"
-         data-context="signup"
-         data-ux_mode="popup"
-         data-callback="handleCredentialResponse">
-    </div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-shape="rectangular"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-size="large">
-    </div>
+    <div class="link"><a href="/">Já tem uma conta? Faça login</a></div>
   </div>
-  <script src="/script/fetch.js"></script>
-  <script src="/script/login-google.js"></script>
+
+  <script src="/script/cadastro.js"></script>
 </body>
 </html>

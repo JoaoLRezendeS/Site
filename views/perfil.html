@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil do Usuário</title>
+  <link rel="stylesheet" href="/style/perfil.css" />
+</head>
+<body>
+  <div class="perfil-container">
+    <h2>Meu Perfil</h2>
+    <div class="info"><strong>Nome social:</strong> <span id="nome"></span></div>
+    <div class="info"><strong>Pronome:</strong> <span id="pronome"></span></div>
+    <div class="info"><strong>Gênero:</strong> <span id="genero"></span></div>
+    <div class="info"><strong>Sexualidade:</strong> <span id="sexualidade"></span></div>
+    <div class="info"><strong>Data de nascimento:</strong> <span id="nascimento"></span></div>
+    <div class="info"><strong>E-mail:</strong> <span id="email"></span></div>
+
+    <button id="btnEditarPerfil">Editar Perfil</button>
+
+    <div id="formEditarPerfil" style="display:none;">
+      <h3>Editar Informações</h3>
+      <form id="formAtualizarPerfil">
+        <label for="editNome">Nome social</label>
+        <input type="text" id="editNome" required />
+
+        <label for="editPronome">Pronome</label>
+        <input type="text" id="editPronome" placeholder="Ela/dela" required />
+
+        <label for="editGenero">Gênero</label>
+        <select id="editGenero" required>
+          <option value="" disabled selected>Selecione seu gênero</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Homem trans">Homem trans</option>
+          <option value="Mulher trans">Mulher trans</option>
+          <option value="Não binário">Não binário</option>
+        </select>
+
+        <label for="editSexualidade">Sexualidade</label>
+        <select id="editSexualidade" required>
+          <option disabled selected>Selecione sua sexualidade</option>
+          <option value="Heterossexual">Heterossexual</option>
+          <option value="Homossexual">Homossexual</option>
+          <option value="Bissexual">Bissexual</option>
+          <option value="Pansexual">Pansexual</option>
+          <option value="Assexual">Assexual</option>
+          <option value="Demissexual">Demissexual</option>
+          <option value="Polisexual">Polisexual</option>
+          <option value="Sapiossexual">Sapiossexual</option>
+          <option value="Graysexual">Graysexual</option>
+          <option value="Skoliosexual">Skoliosexual</option>
+          <option value="Androssexual">Androssexual</option>
+          <option value="Ginessexual">Ginessexual</option>
+          <option value="Queer">Queer</option>
+        </select>
+
+        <label for="editNascimento">Data de nascimento</label>
+        <input type="date" id="editNascimento" required />
+
+        <button type="submit">Salvar Alterações</button>
+        <button type="button" id="btnCancelarEdicao">Cancelar</button>
+      </form>
+    </div>
+
+    <div class="botao-voltar">
+  <button onclick="window.location.href='/home'">Voltar</button>
+</div>
+
+  </div>
+
+  <script src="/script/perfil.js"></script>
+</body>
+</html>
