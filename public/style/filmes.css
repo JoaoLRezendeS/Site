@@ -32,9 +32,11 @@ header {
   align-items: center;
 }
 
-.navbar h1 {
+.logo {
   color: #fff;
   font-size: 1.8rem;
+  text-decoration: none;
+  font-weight: 700;
 }
 
 .nav-links {
@@ -42,7 +44,7 @@ header {
   gap: 24px;
 }
 
-.navbar a {
+.nav-links a {
   color: #fff;
   text-decoration: none;
   font-weight: 500;

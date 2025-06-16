@@ -31,9 +31,11 @@ header {
   padding: 0 20px;
 }
 
-.navbar h1 {
+.logo {
   color: #fff;
   font-size: 1.8rem;
+  text-decoration: none;
+  font-weight: 700;
 }
 
 .nav-links {
@@ -41,7 +43,7 @@ header {
   gap: 24px;
 }
 
-.navbar a {
+.nav-links a {
   color: #fff;
   text-decoration: none;
   font-weight: 500;
@@ -75,6 +77,7 @@ header {
   position: sticky;
   top: 100px;
   height: fit-content;
+  border: 1px solid #d0d8f0;
 }
 
 .sidebar nav ul {
@@ -125,6 +128,7 @@ header {
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   max-width: 750px;
   margin: 0 auto;
+  margin-bottom: 15px;
 }
 
 .filme-info-wrapper {
